@@ -1,41 +1,137 @@
-<div class="section-label">Broadcast Feeds</div>
-
-<!-- Responsive 16:9 Stream Wrapper -->
-<div class="stream-container">
-  <div id="twitch-embed"></div>
-</div>
-
-<script src="https://player.twitch.tv/js/embed/v1.js"></script>
-<script>
-  new Twitch.Embed("twitch-embed", {
-    width: "100%",
-    height: "100%", // Inherits from the container
-    channel: "FalconElite",
-    layout: "video",
-    autoplay: false,
-    parent: ["localhost"] // REMINDER: Update this to your live domain
-  });
-</script>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FalconElite — Live Streamer · The Nest</title>
+<meta name="description" content="FalconElite — Daily live streamer, veteran operator, and leader of BELLICUS. Enter The Nest for streams, setup guides, and gaming content.">
 <style>
-  /* The container forces a 16:9 aspect ratio */
-  .stream-container {
-    position: relative;
-    width: 100%;
-    padding-top: 56.25%; /* 16:9 Ratio */
-    background: var(--imperial-panel);
-    border: 1px solid var(--imperial-edge);
-    border-radius: 6px;
-    overflow: hidden;
-    margin-bottom: 12px;
+  :root {
+    --space-black: #080A10;
+    --imperial-dark: #121622;
+    --imperial-panel: #1A1F2C;
+    --imperial-edge: #2E3648;
+    --deathstar-white: #F5F7FA;
+    --text-primary: #E2E8F0;
+    --text-dim: #94A3B8;
+    --accent-red: #FF334B;
+    --twitch-purple: #9146FF;
   }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(900px 480px at 50% -10%, rgba(245,247,252,0.06), transparent 60%),
+      radial-gradient(700px 420px at 85% 100%, rgba(255,51,75,0.03), transparent 55%),
+      linear-gradient(90deg, rgba(46,54,72,0.1) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(46,54,72,0.1) 1px, transparent 1px),
+      var(--space-black);
+    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 56px 20px 40px;
+  }
+  
+  .card-col { width: 100%; max-width: 520px; display: flex; flex-direction: column; align-items: center; }
 
-  /* The actual embed is stretched to fill the 16:9 box */
-  #twitch-embed {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+  /* Identity */
+  .logo-wrap { position: relative; display: inline-block; text-decoration: none; }
+  .brand-title { font-size: 32px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--deathstar-white); text-shadow: 0 0 20px rgba(245,247,252,0.3); }
+  .tagline { color: var(--text-dim); font-size: 15.5px; margin-top: 14px; text-align: center; max-width: 42ch; line-height: 1.5; }
+
+  /* Uplink */
+  .uplink { display: flex; align-items: center; gap: 8px; margin-top: 18px; }
+  .uplink span.active { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-red); animation: pulse 2s infinite; }
+  .uplink em { font-style: normal; font-size: 11px; font-weight: 700; letter-spacing: .25em; text-transform: uppercase; color: var(--text-dim); }
+  @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
+
+  /* Links & Sections */
+  .links { width: 100%; margin-top: 34px; display: flex; flex-direction: column; gap: 12px; }
+  .section-label { margin: 22px 0 4px; font-size: 11px; font-weight: 800; letter-spacing: .25em; text-transform: uppercase; color: var(--text-dim); border-left: 2px solid var(--accent-red); padding-left: 8px; align-self: flex-start; }
+  
+  a.link { display: flex; align-items: center; gap: 14px; width: 100%; background: var(--imperial-panel); border: 1px solid var(--imperial-edge); border-radius: 6px; padding: 15px 18px; text-decoration: none; color: var(--text-primary); transition: .12s; }
+  a.link:hover { transform: translateY(-2px); border-color: var(--deathstar-white); background: #222838; }
+  .ico { flex: 0 0 40px; height: 40px; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: var(--imperial-dark); border: 1px solid var(--imperial-edge); }
+  .name { font-weight: 700; font-size: 16px; color: var(--deathstar-white); }
+  .desc { font-size: 13px; color: var(--text-dim); }
+
+  /* Twitch Responsive Embed */
+  .stream-container { position: relative; width: 100%; padding-top: 56.25%; background: var(--imperial-panel); border: 1px solid var(--imperial-edge); border-radius: 6px; overflow: hidden; margin-bottom: 12px; }
+  #twitch-embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+  /* Media Grids */
+  .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin: 12px 0 6px; }
+  .shot { position: relative; border-radius: 6px; overflow: hidden; border: 1px solid var(--imperial-edge); aspect-ratio: 16/9; background: var(--imperial-panel); }
+  .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; margin: 6px 0 4px; }
+  .gallery img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; border: 1px solid var(--imperial-edge); }
+
+  footer { margin-top: 56px; color: var(--text-dim); font-size: 13px; text-align: center; }
+  
+  @media (min-width: 900px) {
+    .card-col { max-width: 1000px; }
+    .links { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .section-label, .stream-container, .photos, .gallery { grid-column: 1 / -1; }
   }
 </style>
+</head>
+<body>
+<div class="card-col">
+
+  <a class="logo-wrap" href="https://twitch.tv/FalconElite" target="_blank">
+    <h1 class="brand-title">FalconElite</h1>
+  </a>
+  
+  <p class="tagline">Daily Live Streamer. Veteran operator specializing in high-fidelity space simulation and tactical deployments.</p>
+
+  <div class="uplink">
+    <span class="active"></span>
+    <em>7+ Year Deployment</em>
+  </div>
+
+  <div class="links">
+    
+    <div class="section-label">Broadcast Feeds</div>
+    
+    <!-- Responsive Twitch Embed -->
+    <div class="stream-container">
+      <div id="twitch-embed"></div>
+    </div>
+    <script src="https://player.twitch.tv/js/embed/v1.js"></script>
+    <script>
+      new Twitch.Embed("twitch-embed", {
+        width: "100%",
+        height: "100%",
+        channel: "FalconElite",
+        layout: "video",
+        autoplay: false,
+        parent: ["localhost"] // CHANGE TO YOUR DOMAIN
+      });
+    </script>
+
+    <a href="https://youtube.com/@FalconElite" class="link" target="_blank">
+      <div class="ico"><svg viewBox="0 0 24 24" width="20" fill="#E2E8F0"><path d="M23.5 6.2c-.1-1.6-1.4-2.8-3-3C17.5 3 12 3 12 3s-5.5 0-8.5.2c-1.6.2-2.9 1.4-3 3-.3 2.5-.3 7.8-.3 7.8s0 5.3.3 7.8c.1 1.6 1.4 2.8 3 3 2.9.2 8.5.2 8.5.2s5.5 0 8.5-.2c1.6-.2 2.9-1.4 3-3 .3-2.5.3-7.8.3-7.8s0-5.3-.3-7.8zM9.5 15.6V8.4l7 3.6-7 3.6z"/></svg></div>
+      <div class="meta"><div class="name">YouTube Database</div><div class="desc">Tactical reviews and VOD archives.</div></div>
+    </a>
+
+    <div class="section-label">Field Intel</div>
+    <div class="photos">
+      <div class="shot"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100'><rect width='100%' height='100%' fill='%231A1F2C'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' fill='%2394A3B8'>STAR CITIZEN</text></svg>"></div>
+      <div class="shot"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100'><rect width='100%' height='100%' fill='%231A1F2C'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' fill='%2394A3B8'>GAME REVIEWS</text></svg>"></div>
+    </div>
+
+    <div class="section-label">Rig Blueprint</div>
+    <div class="gallery">
+      <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100%' height='100%' fill='%23121622'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='10' fill='%232E3648'>GAMING</text></svg>">
+      <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100%' height='100%' fill='%23121622'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='10' fill='%232E3648'>ENCODER</text></svg>">
+      <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100%' height='100%' fill='%23121622'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='10' fill='%232E3648'>STATION</text></svg>">
+    </div>
+
+  </div>
+
+  <footer>&copy; 2026 <b>FalconElite</b>. Terminal Network Authorization Secured.</footer>
+</div>
+</body>
+</html>
