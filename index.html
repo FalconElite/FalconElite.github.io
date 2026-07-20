@@ -13,44 +13,53 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
             background: var(--space-black); color: var(--deathstar-white);
-            font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             padding: 40px 20px; display: flex; justify-content: center;
         }
         .container { width: 100%; max-width: 500px; }
 
         /* Header */
-        .brand-header { text-align: center; margin-bottom: 30px; }
-        .brand-logo { width: 120px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.1)); margin-bottom: 15px; }
-        h1 { font-size: 1.5rem; text-transform: uppercase; letter-spacing: 0.2em; }
-        .tagline { color: var(--text-dim); font-size: 0.85rem; margin-top: 5px; }
+        .brand-header { text-align: center; margin-bottom: 20px; }
+        .brand-logo { width: 130px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.1)); transition: 0.3s; }
+        .brand-logo:hover { transform: scale(1.05); }
+        h1 { font-size: 1.5rem; text-transform: uppercase; letter-spacing: 0.2em; margin-top: 10px; }
 
-        /* Stream Section */
-        .section-label { font-size: 0.7rem; font-weight: 800; color: var(--text-dim); 
-                         text-transform: uppercase; letter-spacing: 0.2em; margin: 20px 0 10px; }
+        /* Glitchy Typewriter Logs */
+        .log-container { 
+            position: relative; height: 24px; margin: 15px 0 25px; 
+            background: #0D111A; border: 1px solid var(--imperial-edge); 
+            border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden;
+        }
+        .log-line { 
+            position: absolute; font-family: monospace; font-size: 0.75rem; color: var(--accent-red); 
+            opacity: 0; animation: cycle-logs 12s infinite; 
+        }
+        .typewriter { 
+            display: inline-block; white-space: nowrap; overflow: hidden; 
+            border-right: 2px solid var(--accent-red); width: 0; 
+            animation: typing 2s steps(30, end) forwards, blink 0.75s step-end infinite;
+        }
+        .log-line:nth-child(1) { animation-delay: 0s; }
+        .log-line:nth-child(2) { animation-delay: 4s; }
+        .log-line:nth-child(3) { animation-delay: 8s; }
+
+        @keyframes typing { from { width: 0; } to { width: 32ch; } }
+        @keyframes blink { from, to { border-color: transparent } 50% { border-color: var(--accent-red) } }
+        @keyframes cycle-logs { 0%, 30% { opacity: 1; } 33%, 100% { opacity: 0; } }
+
+        /* Twitch Section */
+        .section-label { font-size: 0.7rem; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 10px; }
         .stream-wrapper { 
-            position: relative; width: 100%; padding-top: 56.25%; 
-            background: var(--imperial-panel); border: 1px solid var(--imperial-edge);
-            border-radius: 4px; overflow: hidden; margin-bottom: 20px;
+            position: relative; width: 100%; padding-top: 56.25%; background: var(--imperial-panel); 
+            border: 1px solid var(--imperial-edge); border-radius: 4px; overflow: hidden; margin-bottom: 25px;
         }
-        .offline-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            background: var(--imperial-panel); z-index: 1;
-        }
-        .offline-overlay text { animation: dim-pulse 3s infinite ease-in-out; }
+        .offline-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--imperial-panel); z-index: 1; }
         #twitch-embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
 
-        /* Navigation Grid */
+        /* Nav */
         .nav-grid { display: grid; gap: 10px; }
-        .btn { 
-            display: flex; align-items: center; padding: 14px 20px;
-            background: var(--imperial-panel); border: 1px solid var(--imperial-edge);
-            color: var(--deathstar-white); text-decoration: none; font-size: 0.9rem;
-            border-left: 4px solid transparent; transition: 0.2s;
-        }
+        .btn { display: flex; align-items: center; padding: 14px 20px; background: var(--imperial-panel); border: 1px solid var(--imperial-edge); color: var(--deathstar-white); text-decoration: none; font-size: 0.9rem; border-left: 4px solid transparent; transition: 0.2s; }
         .btn:hover { border-left-color: var(--accent-red); background: #222838; }
-
-        @keyframes dim-pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
         footer { margin-top: 40px; text-align: center; font-size: 0.7rem; color: var(--text-dim); }
     </style>
 </head>
@@ -60,18 +69,23 @@
     <header class="brand-header">
         <img src="FalconLogo.png" alt="FalconElite" class="brand-logo">
         <h1>FalconElite</h1>
-        <p class="tagline">Commander of BELLICUS | Daily Tactical Streams</p>
     </header>
+
+    <div class="log-container">
+        <div class="log-line"><span class="typewriter">SYSTEM STATUS: OPTIMAL</span></div>
+        <div class="log-line"><span class="typewriter">SCHEDULE: DAILY STREAMS @ 18:00 CST</span></div>
+        <div class="log-line"><span class="typewriter">MISSION: STAR CITIZEN OPS</span></div>
+    </div>
 
     <div class="section-label">Live Broadcast</div>
     <div class="stream-wrapper">
         <div class="offline-overlay">
-            <svg viewBox="0 0 200 50" width="80%"><text x="50%" y="50%" fill="#2E3648" text-anchor="middle" font-weight="bold" letter-spacing="0.1em">TRANSMISSION OFFLINE</text></svg>
+            <svg viewBox="0 0 200 50" width="70%"><text x="50%" y="50%" fill="#2E3648" text-anchor="middle" font-weight="bold" letter-spacing="0.1em">TRANSMISSION OFFLINE</text></svg>
         </div>
         <div id="twitch-embed"></div>
     </div>
 
-    <div class="section-label">Command Links</div>
+    <div class="section-label">Command Access</div>
     <div class="nav-grid">
         <a href="https://twitch.tv/FalconElite" class="btn">Watch Live Feed</a>
         <a href="https://youtube.com/@FalconElite" class="btn">YouTube Archive</a>
