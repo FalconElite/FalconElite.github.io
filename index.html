@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Nest | FalconElite</title>
     
-    <!-- Google Fonts & FontAwesome 6.6.0 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
     <style>
-        /* ==========================================================================
-           1. ROOT VARIABLES
-           ========================================================================== */
         :root {
             --bg-base: #050507;
             --card-bg: rgba(18, 20, 26, 0.85);
@@ -28,24 +24,41 @@
 
         @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
 
-        /* ==========================================================================
-           2. BASE RESET & ATMOSPHERE
-           ========================================================================== */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-primary); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 40px 20px; overflow-x: hidden; }
+        body { 
+            font-family: 'Inter', sans-serif; background-color: var(--bg-base); 
+            color: var(--text-primary); min-height: 100vh; display: flex; 
+            justify-content: center; align-items: center; padding: 40px 20px; 
+            overflow-x: hidden; position: relative;
+        }
 
-        /* Background Effects */
-        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 60%); z-index: -4; animation: storm 12s infinite; }
+        /* ATMOSPHERIC EFFECTS */
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+                        radial-gradient(circle at 20% 80%, rgba(200, 210, 225, 0.03) 0%, transparent 50%);
+            z-index: -4; animation: stormAtmosphere 12s infinite ease-in-out;
+        }
+
+        body::after {
+            content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            filter: blur(40px); opacity: 0; z-index: -2;
+            animation: fullScreenLightning 10s infinite;
+        }
+
         .fog-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -3; overflow: hidden; pointer-events: none; }
-        .fog { position: absolute; width: 200%; height: 140%; filter: blur(60px); opacity: 0.6; background: radial-gradient(ellipse, rgba(255,255,255,0.06) 0%, transparent 70%); top: -20%; }
+        .fog-layer { position: absolute; width: 200%; height: 140%; filter: blur(60px); opacity: 0.6; }
+        .fog-1 { top: -20%; background: radial-gradient(ellipse, rgba(255,255,255,0.06) 0%, transparent 70%); animation: rollFogRight 28s linear infinite alternate; }
 
-        /* ==========================================================================
-           3. COMPONENTS
-           ========================================================================== */
+        @keyframes stormAtmosphere { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+        @keyframes fullScreenLightning { 0%, 86%, 94%, 100% { opacity: 0; } 87% { opacity: 0.4; } 89% { opacity: 0.8; } }
+        @keyframes rollFogRight { 0% { transform: translateX(0); } 100% { transform: translateX(30%); } }
+
+        /* CONTENT */
         .container { width: 100%; max-width: 680px; display: flex; flex-direction: column; align-items: center; z-index: 1; text-align: center; }
         .avatar-img { width: 180px; height: 180px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.25); margin-bottom: 20px; box-shadow: 0 0 35px rgba(255,255,255,0.12); }
         
-        /* Badges */
         .status-wrapper { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 10px; }
         .live-badge { background: var(--live-red); color: white; font-size: 0.7rem; font-weight: 800; padding: 4px 12px; border-radius: 20px; display: none; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.2); }
         .live-badge.is-live { display: flex; }
@@ -59,12 +72,10 @@
         .profile-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 5px; }
         .profile-subtext { font-size: 0.95rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         
-        /* Streak Badge */
         .streak-badge { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 10px 22px; border-radius: 30px; background: var(--card-bg); font-weight: 600; border: 1px solid var(--card-border); margin-top: 14px; }
         .streak-badge::before { content: ''; position: absolute; inset: -1.5px; border-radius: 32px; padding: 1.5px; background: conic-gradient(from var(--angle), transparent 70%, #fff 95%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; animation: rotateLight 4s linear infinite; }
         @keyframes rotateLight { to { --angle: 360deg; } }
 
-        /* Social Grid */
         .social-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 30px; width: 100%; max-width: 320px; }
         .social-btn { display: flex; justify-content: center; align-items: center; height: 55px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); border-radius: var(--radius-main); color: var(--text-primary); font-size: 1.4rem; transition: var(--transition); text-decoration: none; }
         .social-btn:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-4px); }
@@ -76,7 +87,7 @@
 </head>
 <body>
 
-    <div class="fog-container"><div class="fog"></div></div>
+    <div class="fog-container"><div class="fog-layer fog-1"></div></div>
 
     <div class="container">
         <img src="FalconLogo.png" alt="FalconElite" class="avatar-img">
@@ -103,28 +114,21 @@
     </div>
 
     <script>
-        // 1. Streak Calculator
         const diffDays = Math.floor(Math.abs(new Date() - new Date('2019-01-02T00:00:00')) / (1000 * 60 * 60 * 24)) + 1;
         document.getElementById('streakDays').textContent = diffDays.toLocaleString();
 
-        // 2. Twitch Live Data Fetcher
         async function checkTwitchData() {
             try {
                 const statusRes = await fetch('https://decapi.me/twitch/uptime/falconelite');
                 const statusText = await statusRes.text();
-
                 if (statusRes.ok && !statusText.includes('offline') && !statusText.includes('not found')) {
                     document.getElementById('liveBadge').classList.add('is-live');
-                    
                     const gameRes = await fetch('https://decapi.me/twitch/game/falconelite');
-                    const gameName = await gameRes.text();
-                    
-                    document.getElementById('gameName').textContent = gameName;
+                    document.getElementById('gameName').textContent = await gameRes.text();
                     document.getElementById('gameInfo').classList.add('is-live');
                 }
-            } catch (err) { console.log('Twitch API unreachable'); }
+            } catch (err) { console.log('API unreachable'); }
         }
-
         checkTwitchData();
     </script>
 </body>
