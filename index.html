@@ -172,7 +172,7 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            padding: 10px 0 20px 0;
+            padding: 10px 0 10px 0;
             position: relative;
         }
 
@@ -201,7 +201,7 @@
             box-shadow: 0 0 50px rgba(255, 255, 255, 0.3), 0 12px 30px rgba(0, 0, 0, 0.9);
         }
 
-        /* Live Badge - Hidden by default until JS confirms live status */
+        /* Live Badge */
         .live-badge {
             position: absolute;
             bottom: 8px;
@@ -240,6 +240,9 @@
         /* Profile Info & Text Lightning Effect */
         .profile-info {
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .profile-title {
@@ -248,7 +251,6 @@
             color: var(--text-primary);
             letter-spacing: -0.5px;
             margin-bottom: 8px;
-            /* Lightning flash synced with background storm */
             animation: nameLightningFlash 10s infinite;
         }
 
@@ -292,6 +294,45 @@
             text-transform: uppercase;
             opacity: 0.75;
         }
+
+        /* ==========================================================================
+           5. STREAK COUNTER BADGE
+           ========================================================================== */
+        .streak-badge {
+            margin-top: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            padding: 8px 18px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: var(--transition);
+        }
+
+        .streak-badge:hover {
+            border-color: var(--card-border-hover);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+        }
+
+        .streak-icon {
+            color: #ff9500;
+            font-size: 1rem;
+            filter: drop-shadow(0 0 6px rgba(255, 149, 0, 0.6));
+        }
+
+        .streak-count {
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
     </style>
 </head>
 <body>
@@ -320,13 +361,33 @@
                 <h1 class="profile-title">FalconElite</h1>
                 <p class="profile-bio">Daily Streamer & Content Creator</p>
                 <p class="profile-subtext">Welcome to The Nest</p>
+
+                <!-- DYNAMIC STREAK COUNTER BADGE -->
+                <div class="streak-badge" title="Daily Stream Streak starting Jan 1, 2019">
+                    <i class="fa-solid fa-fire streak-icon"></i>
+                    <span><span id="streakDays" class="streak-count">---</span> Day Stream Streak</span>
+                </div>
             </div>
         </header>
 
     </div>
 
-    <!-- TWITCH LIVE CHECK SCRIPT -->
+    <!-- TWITCH & STREAK CALCULATOR SCRIPT -->
     <script>
+        // Calculate Days Elapsed Since Jan 1, 2019
+        function updateStreamStreak() {
+            const startDate = new Date('2019-01-01T00:00:00');
+            const today = new Date();
+            
+            // Difference in milliseconds converted to whole days + 1 (for Day 1 start)
+            const diffTime = Math.abs(today - startDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            
+            // Format number with commas (e.g., 2,757)
+            document.getElementById('streakDays').textContent = diffDays.toLocaleString();
+        }
+
+        // Twitch Live Status Check
         async function checkTwitchStatus() {
             const username = 'falconelite';
             const decapiUrl = `https://decapi.me/twitch/uptime/${username}`;
@@ -345,6 +406,8 @@
             }
         }
 
+        // Initialize scripts
+        updateStreamStreak();
         checkTwitchStatus();
     </script>
 
