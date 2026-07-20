@@ -167,7 +167,6 @@
             z-index: 1;
         }
 
-        /* Borderless Header Layout */
         .profile-header {
             display: flex;
             flex-direction: column;
@@ -177,10 +176,12 @@
             position: relative;
         }
 
-        /* Large Floating Avatar Container */
-        .avatar-wrapper {
+        .avatar-link {
+            display: inline-block;
             position: relative;
+            text-decoration: none;
             margin-bottom: 20px;
+            border-radius: 50%;
         }
 
         .avatar-img {
@@ -194,12 +195,13 @@
             transition: var(--transition);
         }
 
-        .avatar-img:hover {
-            border-color: rgba(255, 255, 255, 0.6);
-            box-shadow: 0 0 45px rgba(255, 255, 255, 0.25), 0 12px 30px rgba(0, 0, 0, 0.9);
+        .avatar-link:hover .avatar-img {
+            border-color: rgba(255, 255, 255, 0.7);
+            transform: scale(1.03);
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.3), 0 12px 30px rgba(0, 0, 0, 0.9);
         }
 
-        /* Live Badge Indicator */
+        /* Live Badge - Hidden by default until JS confirms live status */
         .live-badge {
             position: absolute;
             bottom: 8px;
@@ -211,11 +213,15 @@
             padding: 4px 10px;
             border-radius: 20px;
             letter-spacing: 0.5px;
-            display: flex;
+            display: none; /* Controlled by JavaScript */
             align-items: center;
             gap: 5px;
             border: 2px solid var(--bg-base);
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        .live-badge.is-live {
+            display: flex; /* Shown only when live */
         }
 
         .live-dot {
@@ -276,13 +282,13 @@
         
         <!-- STEP 2: FRAMELESS PROFILE HEADER -->
         <header class="profile-header">
-            <!-- Large Avatar & Live Badge -->
-            <div class="avatar-wrapper">
+            <!-- Clickable Logo & Dynamic Live Badge -->
+            <a href="https://twitch.tv/FalconElite" target="_blank" rel="noopener noreferrer" class="avatar-link" title="Watch FalconElite on Twitch">
                 <img src="FalconLogo.png" alt="FalconElite Logo" class="avatar-img">
-                <div class="live-badge">
+                <div id="liveBadge" class="live-badge">
                     <span class="live-dot"></span> LIVE
                 </div>
-            </div>
+            </a>
 
             <!-- Profile Info Text -->
             <div class="profile-info">
@@ -295,6 +301,38 @@
         </header>
 
     </div>
+
+    <!-- TWITCH LIVE CHECK SCRIPT -->
+    <script>
+        async function checkTwitchStatus() {
+            const username = 'falconelite';
+            // Free public Twitch status proxy endpoint
+            const url = `https://api.twitch.tv/helix/streams?user_login=${username}`;
+            
+            /* 
+             * Note: Standard Twitch Helix calls require Client-ID / Bearer headers.
+             * You can also use a lightweight proxy like Decapi:
+             */
+            const decapiUrl = `https://decapi.me/twitch/uptime/${username}`;
+
+            try {
+                const response = await fetch(decapiUrl);
+                const text = await response.text();
+                
+                // If Decapi returns a time instead of "offline", channel is live!
+                if (response.ok && !text.includes('offline') && !text.includes('not found')) {
+                    document.getElementById('liveBadge').classList.add('is-live');
+                } else {
+                    document.getElementById('liveBadge').classList.remove('is-live');
+                }
+            } catch (err) {
+                console.log('Error checking Twitch live status:', err);
+            }
+        }
+
+        // Run check when page loads
+        checkTwitchStatus();
+    </script>
 
 </body>
 </html>
