@@ -67,7 +67,13 @@
 
         /* CONTENT */
         .container { width: 100%; max-width: 680px; display: flex; flex-direction: column; align-items: center; z-index: 1; text-align: center; }
-        .avatar-img { width: 180px; height: 180px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.25); margin-bottom: 20px; box-shadow: 0 0 35px rgba(255,255,255,0.12); }
+        
+        /* LOGO & LIVE INTERACTION */
+        .avatar-link { display: inline-block; cursor: default; pointer-events: none; transition: var(--transition); }
+        .avatar-link.is-live { cursor: pointer; pointer-events: auto; }
+        .avatar-link.is-live:hover .avatar-img { transform: scale(1.03); box-shadow: 0 0 45px rgba(255, 59, 48, 0.35); border-color: var(--live-red); }
+        
+        .avatar-img { width: 180px; height: 180px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.25); margin-bottom: 20px; box-shadow: 0 0 35px rgba(255,255,255,0.12); transition: var(--transition); }
         
         .status-wrapper { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 10px; }
         .live-badge { background: var(--live-red); color: white; font-size: 0.7rem; font-weight: 800; padding: 4px 12px; border-radius: 20px; display: none; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.2); }
@@ -104,12 +110,14 @@
     <div class="fog-container"><div class="fog-layer fog-1"></div></div>
 
     <div class="container">
-        <img src="FalconLogo.png" alt="FalconElite" class="avatar-img">
+        <!-- WRAPPED AVATAR IN A LINK -->
+        <a href="https://twitch.tv/FalconElite" id="avatarLink" class="avatar-link" target="_blank" rel="noopener">
+            <img src="FalconLogo.png" alt="FalconElite" class="avatar-img">
+        </a>
         
         <div class="status-wrapper">
-            <!-- FORCED LIVE VIEW -->
-            <div id="liveBadge" class="live-badge is-live"><span class="live-dot"></span> LIVE</div>
-            <div id="gameInfo" class="game-info is-live"><i class="fa-solid fa-gamepad"></i> Playing: <span id="gameName">Star Citizen</span></div>
+            <div id="liveBadge" class="live-badge"><span class="live-dot"></span> LIVE</div>
+            <div id="gameInfo" class="game-info"><i class="fa-solid fa-gamepad"></i> Playing: <span id="gameName">...</span></div>
         </div>
         
         <h1 class="profile-title">FalconElite</h1>
@@ -132,16 +140,15 @@
         const diffDays = Math.floor(Math.abs(new Date() - new Date('2019-01-02T00:00:00')) / (1000 * 60 * 60 * 24)) + 1;
         document.getElementById('streakDays').textContent = diffDays.toLocaleString();
 
-        // Standard live check disabled for preview. 
-        // To return to auto-mode, remove the "is-live" classes from the HTML above 
-        // and uncomment the function call below.
-        /*
         async function checkTwitchData() {
             try {
                 const statusRes = await fetch('https://decapi.me/twitch/uptime/falconelite');
                 const statusText = await statusRes.text();
                 if (statusRes.ok && !statusText.includes('offline') && !statusText.includes('not found')) {
+                    // Activate Live States
                     document.getElementById('liveBadge').classList.add('is-live');
+                    document.getElementById('avatarLink').classList.add('is-live');
+                    
                     const gameRes = await fetch('https://decapi.me/twitch/game/falconelite');
                     document.getElementById('gameName').textContent = await gameRes.text();
                     document.getElementById('gameInfo').classList.add('is-live');
@@ -149,7 +156,6 @@
             } catch (err) { console.log('API unreachable'); }
         }
         checkTwitchData();
-        */
     </script>
 </body>
 </html>
