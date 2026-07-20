@@ -54,7 +54,6 @@
         @keyframes stormAtmosphere { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
         @keyframes rollFogRight { 0% { transform: translateX(0); } 100% { transform: translateX(30%); } }
         
-        /* THE FLASH LOGIC: Only triggers at 87% and 89% */
         @keyframes lightningFlash { 
             0%, 86%, 94%, 100% { opacity: 0; } 
             87% { opacity: 0.4; } 
@@ -108,8 +107,9 @@
         <img src="FalconLogo.png" alt="FalconElite" class="avatar-img">
         
         <div class="status-wrapper">
-            <div id="liveBadge" class="live-badge"><span class="live-dot"></span> LIVE</div>
-            <div id="gameInfo" class="game-info"><i class="fa-solid fa-gamepad"></i> Playing: <span id="gameName">...</span></div>
+            <!-- FORCED LIVE VIEW -->
+            <div id="liveBadge" class="live-badge is-live"><span class="live-dot"></span> LIVE</div>
+            <div id="gameInfo" class="game-info is-live"><i class="fa-solid fa-gamepad"></i> Playing: <span id="gameName">Star Citizen</span></div>
         </div>
         
         <h1 class="profile-title">FalconElite</h1>
@@ -132,6 +132,10 @@
         const diffDays = Math.floor(Math.abs(new Date() - new Date('2019-01-02T00:00:00')) / (1000 * 60 * 60 * 24)) + 1;
         document.getElementById('streakDays').textContent = diffDays.toLocaleString();
 
+        // Standard live check disabled for preview. 
+        // To return to auto-mode, remove the "is-live" classes from the HTML above 
+        // and uncomment the function call below.
+        /*
         async function checkTwitchData() {
             try {
                 const statusRes = await fetch('https://decapi.me/twitch/uptime/falconelite');
@@ -145,6 +149,7 @@
             } catch (err) { console.log('API unreachable'); }
         }
         checkTwitchData();
+        */
     </script>
 </body>
 </html>
