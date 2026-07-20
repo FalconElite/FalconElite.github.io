@@ -17,9 +17,9 @@
            ========================================================================== */
         :root {
             --bg-base: #050507;
-            --card-bg: rgba(18, 20, 26, 0.75);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --card-border-hover: rgba(255, 255, 255, 0.3);
+            --card-bg: rgba(18, 20, 26, 0.85);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --card-border-hover: rgba(255, 255, 255, 0.35);
             
             --text-primary: #f0f6fc;
             --text-secondary: #8b949e;
@@ -29,6 +29,13 @@
             --radius-main: 16px;
             --radius-sm: 8px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Register custom property for smooth 360-degree light rotation */
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
         }
 
         /* ==========================================================================
@@ -296,36 +303,83 @@
         }
 
         /* ==========================================================================
-           5. STREAK COUNTER BADGE
+           5. STREAK COUNTER BADGE WITH ROTATING LIGHT BEAM
            ========================================================================== */
         .streak-badge {
-            margin-top: 16px;
+            margin-top: 18px;
+            position: relative;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--card-border);
-            padding: 8px 18px;
+            padding: 10px 22px;
             border-radius: 30px;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             font-size: 0.88rem;
             font-weight: 600;
             color: var(--text-primary);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
             transition: var(--transition);
+            cursor: default;
+        }
+
+        /* Animated Light Beam Border */
+        .streak-badge::before {
+            content: '';
+            position: absolute;
+            inset: -1.5px;
+            border-radius: 32px;
+            padding: 1.5px;
+            background: conic-gradient(
+                from var(--angle),
+                transparent 70%,
+                rgba(255, 255, 255, 0.2) 80%,
+                rgba(255, 255, 255, 0.95) 92%,
+                #ffffff 100%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            animation: rotateLight 4s linear infinite;
+        }
+
+        /* Ambient Glow Trail */
+        .streak-badge::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 32px;
+            background: conic-gradient(
+                from var(--angle),
+                transparent 70%,
+                rgba(255, 255, 255, 0.1) 85%,
+                rgba(255, 255, 255, 0.5) 100%
+            );
+            filter: blur(8px);
+            opacity: 0.6;
+            z-index: -1;
+            pointer-events: none;
+            animation: rotateLight 4s linear infinite;
+        }
+
+        @keyframes rotateLight {
+            to {
+                --angle: 360deg;
+            }
         }
 
         .streak-badge:hover {
-            border-color: var(--card-border-hover);
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8);
         }
 
         .streak-icon {
             color: #ff9500;
             font-size: 1rem;
-            filter: drop-shadow(0 0 6px rgba(255, 149, 0, 0.6));
+            filter: drop-shadow(0 0 6px rgba(255, 149, 0, 0.7));
         }
 
         .streak-count {
@@ -362,7 +416,7 @@
                 <p class="profile-bio">Daily Streamer & Content Creator</p>
                 <p class="profile-subtext">Welcome to The Nest</p>
 
-                <!-- DYNAMIC STREAK COUNTER BADGE -->
+                <!-- DYNAMIC STREAK COUNTER BADGE WITH LIGHTNING BEAM -->
                 <div class="streak-badge" title="Daily Stream Streak starting Jan 1, 2019">
                     <i class="fa-solid fa-fire streak-icon"></i>
                     <span><span id="streakDays" class="streak-count">---</span> Day Stream Streak</span>
@@ -379,11 +433,9 @@
             const startDate = new Date('2019-01-01T00:00:00');
             const today = new Date();
             
-            // Difference in milliseconds converted to whole days + 1 (for Day 1 start)
             const diffTime = Math.abs(today - startDate);
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
             
-            // Format number with commas (e.g., 2,757)
             document.getElementById('streakDays').textContent = diffDays.toLocaleString();
         }
 
