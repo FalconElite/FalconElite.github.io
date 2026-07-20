@@ -3,104 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FalconElite | The Nest</title>
+    <title>The Nest | FalconElite</title>
+    
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
+        /* ==========================================================================
+           1. ROOT VARIABLES
+           ========================================================================== */
         :root {
-            --space-black: #080A10; --imperial-panel: #1A1F2C; 
-            --imperial-edge: #2E3648; --deathstar-white: #F5F7FA;
-            --text-dim: #94A3B8; --accent-red: #FF334B;
+            --bg-base: #050507;
+            --card-bg: rgba(18, 20, 26, 0.75);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --card-border-hover: rgba(255, 255, 255, 0.3);
+            
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            
+            --accent-glow: rgba(255, 255, 255, 0.15);
+            --live-red: #ff3b30;
+            --radius-main: 16px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            background: var(--space-black); color: var(--deathstar-white);
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            padding: 40px 20px; display: flex; justify-content: center;
-        }
-        .container { width: 100%; max-width: 500px; }
 
-        /* Header */
-        .brand-header { text-align: center; margin-bottom: 20px; }
-        .brand-logo { width: 130px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.1)); transition: 0.3s; }
-        .brand-logo:hover { transform: scale(1.05); }
-        h1 { font-size: 1.5rem; text-transform: uppercase; letter-spacing: 0.2em; margin-top: 10px; }
-
-        /* Glitchy Typewriter Logs */
-        .log-container { 
-            position: relative; height: 24px; margin: 15px 0 25px; 
-            background: #0D111A; border: 1px solid var(--imperial-edge); 
-            border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden;
+        /* ==========================================================================
+           2. BASE RESET & ATMOSPHERIC STORM (LIGHTNING & ROLLING FOG)
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-        .log-line { 
-            position: absolute; font-family: monospace; font-size: 0.75rem; color: var(--accent-red); 
-            opacity: 0; animation: cycle-logs 12s infinite; 
-        }
-        .typewriter { 
-            display: inline-block; white-space: nowrap; overflow: hidden; 
-            border-right: 2px solid var(--accent-red); width: 0; 
-            animation: typing 2s steps(30, end) forwards, blink 0.75s step-end infinite;
-        }
-        .log-line:nth-child(1) { animation-delay: 0s; }
-        .log-line:nth-child(2) { animation-delay: 4s; }
-        .log-line:nth-child(3) { animation-delay: 8s; }
 
-        @keyframes typing { from { width: 0; } to { width: 32ch; } }
-        @keyframes blink { from, to { border-color: transparent } 50% { border-color: var(--accent-red) } }
-        @keyframes cycle-logs { 0%, 30% { opacity: 1; } 33%, 100% { opacity: 0; } }
-
-        /* Twitch Section */
-        .section-label { font-size: 0.7rem; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 10px; }
-        .stream-wrapper { 
-            position: relative; width: 100%; padding-top: 56.25%; background: var(--imperial-panel); 
-            border: 1px solid var(--imperial-edge); border-radius: 4px; overflow: hidden; margin-bottom: 25px;
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
         }
-        .offline-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--imperial-panel); z-index: 1; }
-        #twitch-embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
 
-        /* Nav */
-        .nav-grid { display: grid; gap: 10px; }
-        .btn { display: flex; align-items: center; padding: 14px 20px; background: var(--imperial-panel); border: 1px solid var(--imperial-edge); color: var(--deathstar-white); text-decoration: none; font-size: 0.9rem; border-left: 4px solid transparent; transition: 0.2s; }
-        .btn:hover { border-left-color: var(--accent-red); background: #222838; }
-        footer { margin-top: 40px; text-align: center; font-size: 0.7rem; color: var(--text-dim); }
+        /* Ambient Background Depth */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: 
+                radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+                radial-gradient(circle at 20% 80%, rgba(200, 210, 225, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 60%, rgba(200, 210, 225, 0.03) 0%, transparent 50%);
+            z-index: -4;
+            pointer-events: none;
+            animation: stormAtmosphere 12s infinite ease-in-out;
+        }
+
+        /* Full-Screen Multi-Point Lightning Flash */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: 
+                radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.04) 45%, transparent 70%),
+                radial-gradient(circle at 85% 25%, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.03) 40%, transparent 65%),
+                radial-gradient(circle at 50% 75%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+            filter: blur(40px);
+            opacity: 0;
+            z-index: -2;
+            pointer-events: none;
+            animation: fullScreenLightning 10s infinite;
+        }
+
+        /* ==========================================================================
+           3. ROLLING FOG LAYERS
+           ========================================================================== */
+        .fog-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: -3;
+            pointer-events: none;
+        }
+
+        .fog-layer-1 {
+            position: absolute;
+            top: -20%;
+            left: -50%;
+            width: 200%;
+            height: 140%;
+            background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 40%, transparent 70%);
+            filter: blur(50px);
+            opacity: 0.7;
+            animation: rollFogRight 28s linear infinite alternate;
+        }
+
+        .fog-layer-2 {
+            position: absolute;
+            bottom: -30%;
+            right: -50%;
+            width: 200%;
+            height: 140%;
+            background: radial-gradient(ellipse at center, rgba(200, 215, 230, 0.08) 0%, rgba(255, 255, 255, 0.01) 50%, transparent 75%);
+            filter: blur(60px);
+            opacity: 0.5;
+            animation: rollFogLeft 35s linear infinite alternate;
+        }
+
+        /* Animations */
+        @keyframes stormAtmosphere {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes fullScreenLightning {
+            0%, 86%, 94%, 100% { opacity: 0; }
+            87% { opacity: 0.6; }
+            88% { opacity: 0.15; }
+            89% { opacity: 0.95; }
+            91% { opacity: 0.3; }
+            92% { opacity: 0.05; }
+        }
+
+        @keyframes rollFogRight {
+            0% { transform: translateX(0) translateY(0) scale(1); }
+            50% { transform: translateX(15%) translateY(-5%) scale(1.1); }
+            100% { transform: translateX(30%) translateY(5%) scale(1); }
+        }
+
+        @keyframes rollFogLeft {
+            0% { transform: translateX(0) translateY(0) scale(1); }
+            50% { transform: translateX(-20%) translateY(8%) scale(1.15); }
+            100% { transform: translateX(-35%) translateY(-5%) scale(1); }
+        }
+
+        /* ==========================================================================
+           4. MAIN CONTAINER & HEADER STYLES
+           ========================================================================== */
+        .container {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 1;
+        }
+
+        .profile-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-main);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: var(--transition);
+        }
+
+        /* Header Banner Area */
+        .profile-banner {
+            width: 100%;
+            height: 140px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(18, 20, 26, 0.9) 100%);
+            position: relative;
+            /* Replace url with custom banner image if desired */
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Profile Avatar Container */
+        .avatar-wrapper {
+            position: relative;
+            margin-top: -60px;
+            margin-bottom: 16px;
+        }
+
+        .avatar-img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            object-fit: cover;
+            background-color: #161b22;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+        }
+
+        /* Live Badge Indicator */
+        .live-badge {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background: var(--live-red);
+            color: #ffffff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 12px;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            border: 2px solid #0b0c10;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: livePulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Profile Info */
+        .profile-info {
+            padding: 0 24px 28px 24px;
+            width: 100%;
+        }
+
+        .profile-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        .profile-handle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .profile-bio {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            max-width: 500px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header class="brand-header">
-        <img src="FalconLogo.png" alt="FalconElite" class="brand-logo">
-        <h1>FalconElite</h1>
-    </header>
-
-    <div class="log-container">
-        <div class="log-line"><span class="typewriter">SYSTEM STATUS: OPTIMAL</span></div>
-        <div class="log-line"><span class="typewriter">SCHEDULE: DAILY STREAMS @ 18:00 CST</span></div>
-        <div class="log-line"><span class="typewriter">MISSION: STAR CITIZEN OPS</span></div>
+    <!-- Rolling Fog Overlay -->
+    <div class="fog-container">
+        <div class="fog-layer-1"></div>
+        <div class="fog-layer-2"></div>
     </div>
 
-    <div class="section-label">Live Broadcast</div>
-    <div class="stream-wrapper">
-        <div class="offline-overlay">
-            <svg viewBox="0 0 200 50" width="70%"><text x="50%" y="50%" fill="#2E3648" text-anchor="middle" font-weight="bold" letter-spacing="0.1em">TRANSMISSION OFFLINE</text></svg>
-        </div>
-        <div id="twitch-embed"></div>
+    <!-- Main Content Container -->
+    <div class="container">
+        
+        <!-- STEP 2: PROFILE HEADER CARD -->
+        <header class="profile-card">
+            <!-- Banner Image or Gradient Top -->
+            <div class="profile-banner"></div>
+
+            <!-- Avatar & Live Badge -->
+            <div class="avatar-wrapper">
+                <!-- Replace src with your image path or URL -->
+                <img src=""FalconLogo.png"" alt="FalconElite Avatar" class="avatar-img">
+                <div class="live-badge">
+                    <span class="live-dot"></span> LIVE
+                </div>
+            </div>
+
+            <!-- Profile Info Text -->
+            <div class="profile-info">
+                <h1 class="profile-title">FalconElite</h1>
+                <p class="profile-handle">@FalconElite | The Nest</p>
+                <p class="profile-bio">
+                    Daily Streamer & Content Creator. Welcome to The Nest.
+                </p>
+            </div>
+        </header>
+
     </div>
 
-    <div class="section-label">Command Access</div>
-    <div class="nav-grid">
-        <a href="https://twitch.tv/FalconElite" class="btn">Watch Live Feed</a>
-        <a href="https://youtube.com/@FalconElite" class="btn">YouTube Archive</a>
-        <a href="https://robertsspaceindustries.com" class="btn">Join BELLICUS Org</a>
-    </div>
-
-    <footer>SYSTEM READY — FALCONELITE TERMINAL v1.0</footer>
-</div>
-
-<script src="https://player.twitch.tv/js/embed/v1.js"></script>
-<script>
-    new Twitch.Embed("twitch-embed", {
-        width: "100%", height: "100%", channel: "FalconElite",
-        layout: "video", autoplay: false, parent: ["localhost"] 
-    });
-</script>
 </body>
 </html>
