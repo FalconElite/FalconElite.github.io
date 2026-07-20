@@ -6,94 +6,87 @@
     <title>FalconElite | The Nest</title>
     <style>
         :root {
-            --space-black: #080A10; 
-            --imperial-panel: #1A1F2C; 
-            --imperial-edge: #2E3648; 
-            --deathstar-white: #F5F7FA;
-            --text-dim: #94A3B8; 
-            --accent-red: #FF334B;
+            --space-black: #080A10; --imperial-panel: #1A1F2C; 
+            --imperial-edge: #2E3648; --deathstar-white: #F5F7FA;
+            --text-dim: #94A3B8; --accent-red: #FF334B;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
-            background: var(--space-black); 
-            color: var(--deathstar-white);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            padding: 40px 20px; 
-            display: flex; justify-content: center;
+            background: var(--space-black); color: var(--deathstar-white);
+            font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
+            padding: 40px 20px; display: flex; justify-content: center;
         }
-        .container { width: 100%; max-width: 600px; text-align: center; }
+        .container { width: 100%; max-width: 500px; }
 
-        /* Logo Header */
-        .logo-header { width: 100%; margin-bottom: 20px; }
-        .brand-logo { 
-            width: 150px; height: auto; 
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
-            transition: transform 0.3s ease;
-        }
-        .brand-logo:hover { transform: scale(1.05); }
+        /* Header */
+        .brand-header { text-align: center; margin-bottom: 30px; }
+        .brand-logo { width: 120px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.1)); margin-bottom: 15px; }
+        h1 { font-size: 1.5rem; text-transform: uppercase; letter-spacing: 0.2em; }
+        .tagline { color: var(--text-dim); font-size: 0.85rem; margin-top: 5px; }
 
-        /* Typography */
-        h1 { font-size: 2rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 10px; }
-        .tagline { color: var(--text-dim); margin-bottom: 30px; line-height: 1.5; font-size: 0.95rem; }
-
-        /* Responsive Twitch Container */
+        /* Stream Section */
+        .section-label { font-size: 0.7rem; font-weight: 800; color: var(--text-dim); 
+                         text-transform: uppercase; letter-spacing: 0.2em; margin: 20px 0 10px; }
         .stream-wrapper { 
             position: relative; width: 100%; padding-top: 56.25%; 
             background: var(--imperial-panel); border: 1px solid var(--imperial-edge);
-            border-radius: 8px; overflow: hidden; margin-bottom: 25px;
+            border-radius: 4px; overflow: hidden; margin-bottom: 20px;
         }
-        #twitch-embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .offline-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--imperial-panel); z-index: 1;
+        }
+        .offline-overlay text { animation: dim-pulse 3s infinite ease-in-out; }
+        #twitch-embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
 
-        /* Links */
-        .link-group { display: flex; flex-direction: column; gap: 12px; }
+        /* Navigation Grid */
+        .nav-grid { display: grid; gap: 10px; }
         .btn { 
-            display: block; width: 100%; padding: 16px; background: var(--imperial-panel);
-            border: 1px solid var(--imperial-edge); color: var(--deathstar-white); 
-            text-decoration: none; border-radius: 6px; font-weight: 700; 
-            text-transform: uppercase; letter-spacing: 0.05em; transition: 0.2s;
+            display: flex; align-items: center; padding: 14px 20px;
+            background: var(--imperial-panel); border: 1px solid var(--imperial-edge);
+            color: var(--deathstar-white); text-decoration: none; font-size: 0.9rem;
+            border-left: 4px solid transparent; transition: 0.2s;
         }
-        .btn:hover { border-color: var(--deathstar-white); background: #222838; }
+        .btn:hover { border-left-color: var(--accent-red); background: #222838; }
+
+        @keyframes dim-pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+        footer { margin-top: 40px; text-align: center; font-size: 0.7rem; color: var(--text-dim); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Branding -->
-    <header class="logo-header">
-        <a href="/">
-            <img src="FalconLogo.png" alt="FalconElite Logo" class="brand-logo">
-        </a>
+    <header class="brand-header">
+        <img src="FalconLogo.png" alt="FalconElite" class="brand-logo">
+        <h1>FalconElite</h1>
+        <p class="tagline">Commander of BELLICUS | Daily Tactical Streams</p>
     </header>
 
-    <h1>FalconElite</h1>
-    <p class="tagline">Daily Live Streamer. Veteran operator specializing in high-fidelity space simulation and tactical maneuvers.</p>
-
-    <!-- Twitch Live Feed -->
+    <div class="section-label">Live Broadcast</div>
     <div class="stream-wrapper">
+        <div class="offline-overlay">
+            <svg viewBox="0 0 200 50" width="80%"><text x="50%" y="50%" fill="#2E3648" text-anchor="middle" font-weight="bold" letter-spacing="0.1em">TRANSMISSION OFFLINE</text></svg>
+        </div>
         <div id="twitch-embed"></div>
     </div>
 
-    <!-- Navigation -->
-    <div class="link-group">
-        <a href="https://twitch.tv/FalconElite" class="btn">Watch Live on Twitch</a>
-        <a href="https://youtube.com/@FalconElite" class="btn">YouTube Database</a>
+    <div class="section-label">Command Links</div>
+    <div class="nav-grid">
+        <a href="https://twitch.tv/FalconElite" class="btn">Watch Live Feed</a>
+        <a href="https://youtube.com/@FalconElite" class="btn">YouTube Archive</a>
         <a href="https://robertsspaceindustries.com" class="btn">Join BELLICUS Org</a>
     </div>
+
+    <footer>SYSTEM READY — FALCONELITE TERMINAL v1.0</footer>
 </div>
 
-<!-- Load Twitch API -->
 <script src="https://player.twitch.tv/js/embed/v1.js"></script>
 <script>
     new Twitch.Embed("twitch-embed", {
-        width: "100%",
-        height: "100%",
-        channel: "FalconElite",
-        layout: "video",
-        autoplay: false,
-        // REPLACE 'localhost' WITH YOUR ACTUAL GITHUB PAGES DOMAIN (e.g., 'falconelite.github.io')
-        parent: ["localhost"] 
+        width: "100%", height: "100%", channel: "FalconElite",
+        layout: "video", autoplay: false, parent: ["localhost"] 
     });
 </script>
-
 </body>
 </html>
