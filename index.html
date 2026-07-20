@@ -110,7 +110,7 @@
     <div class="fog-container"><div class="fog-layer fog-1"></div></div>
 
     <div class="container">
-        <!-- WRAPPED AVATAR IN A LINK -->
+        <!-- AVATAR LINK -->
         <a href="https://twitch.tv/FalconElite" id="avatarLink" class="avatar-link" target="_blank" rel="noopener">
             <img src="FalconLogo.png" alt="FalconElite" class="avatar-img">
         </a>
@@ -137,15 +137,25 @@
     </div>
 
     <script>
-        const diffDays = Math.floor(Math.abs(new Date() - new Date('2019-01-02T00:00:00')) / (1000 * 60 * 60 * 24)) + 1;
-        document.getElementById('streakDays').textContent = diffDays.toLocaleString();
+        // STREAK CALCULATOR
+        const startDate = new Date('2019-01-02T00:00:00');
+        const manualOffset = 0; // Adjust here if needed
 
+        function updateStreak() {
+            const today = new Date();
+            const diffTime = Math.abs(today - startDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            const finalCount = diffDays + manualOffset;
+            document.getElementById('streakDays').textContent = finalCount.toLocaleString();
+        }
+        updateStreak();
+
+        // DYNAMIC TWITCH API CHECK
         async function checkTwitchData() {
             try {
                 const statusRes = await fetch('https://decapi.me/twitch/uptime/falconelite');
                 const statusText = await statusRes.text();
                 if (statusRes.ok && !statusText.includes('offline') && !statusText.includes('not found')) {
-                    // Activate Live States
                     document.getElementById('liveBadge').classList.add('is-live');
                     document.getElementById('avatarLink').classList.add('is-live');
                     
