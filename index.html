@@ -213,7 +213,7 @@
             padding: 4px 10px;
             border-radius: 20px;
             letter-spacing: 0.5px;
-            display: none; /* Controlled by JavaScript */
+            display: none;
             align-items: center;
             gap: 5px;
             border: 2px solid var(--bg-base);
@@ -221,7 +221,7 @@
         }
 
         .live-badge.is-live {
-            display: flex; /* Shown only when live */
+            display: flex;
         }
 
         .live-dot {
@@ -237,18 +237,41 @@
             50% { opacity: 0.4; transform: scale(0.85); }
         }
 
-        /* Profile Info */
+        /* Profile Info & Text Lightning Effect */
         .profile-info {
             width: 100%;
         }
 
         .profile-title {
-            font-size: 2rem;
+            font-size: 2.8rem;
             font-weight: 800;
             color: var(--text-primary);
             letter-spacing: -0.5px;
             margin-bottom: 4px;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            /* Lightning flash synced with the background storm */
+            animation: nameLightningFlash 10s infinite;
+        }
+
+        @keyframes nameLightningFlash {
+            0%, 86%, 94%, 100% {
+                text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+                color: var(--text-primary);
+            }
+            87% {
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.4);
+                color: #ffffff;
+            }
+            88% {
+                text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+                color: var(--text-primary);
+            }
+            89% {
+                text-shadow: 0 0 25px rgba(255, 255, 255, 0.95), 0 0 50px rgba(255, 255, 255, 0.7);
+                color: #ffffff;
+            }
+            91% {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+            }
         }
 
         .profile-handle {
@@ -260,12 +283,22 @@
         }
 
         .profile-bio {
-            font-size: 1rem;
+            font-size: 1.05rem;
             color: var(--text-primary);
             max-width: 480px;
             margin: 0 auto;
-            opacity: 0.85;
+            opacity: 0.9;
             font-weight: 400;
+        }
+
+        .profile-subtext {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            opacity: 0.75;
         }
     </style>
 </head>
@@ -293,10 +326,9 @@
             <!-- Profile Info Text -->
             <div class="profile-info">
                 <h1 class="profile-title">FalconElite</h1>
-                <p class="profile-handle">@FalconElite | The Nest</p>
-                <p class="profile-bio">
-                    Daily Streamer & Content Creator. Welcome to The Nest.
-                </p>
+                <p class="profile-handle">@FalconElite</p>
+                <p class="profile-bio">Daily Streamer & Content Creator</p>
+                <p class="profile-subtext">Welcome to The Nest</p>
             </div>
         </header>
 
@@ -306,20 +338,12 @@
     <script>
         async function checkTwitchStatus() {
             const username = 'falconelite';
-            // Free public Twitch status proxy endpoint
-            const url = `https://api.twitch.tv/helix/streams?user_login=${username}`;
-            
-            /* 
-             * Note: Standard Twitch Helix calls require Client-ID / Bearer headers.
-             * You can also use a lightweight proxy like Decapi:
-             */
             const decapiUrl = `https://decapi.me/twitch/uptime/${username}`;
 
             try {
                 const response = await fetch(decapiUrl);
                 const text = await response.text();
                 
-                // If Decapi returns a time instead of "offline", channel is live!
                 if (response.ok && !text.includes('offline') && !text.includes('not found')) {
                     document.getElementById('liveBadge').classList.add('is-live');
                 } else {
@@ -330,7 +354,6 @@
             }
         }
 
-        // Run check when page loads
         checkTwitchStatus();
     </script>
 
