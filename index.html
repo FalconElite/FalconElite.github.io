@@ -69,7 +69,10 @@
         .game-info.is-live { display: flex; }
         #gameName { color: var(--text-primary); font-weight: 600; }
 
-        .profile-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 5px; }
+        /* Flashing Name Effect */
+        .profile-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 5px; animation: name-flicker 4s infinite alternate; }
+        @keyframes name-flicker { 0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; } 20%, 22%, 24%, 55% { opacity: 0.7; } }
+
         .profile-subtext { font-size: 0.95rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         
         .streak-badge { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 10px 22px; border-radius: 30px; background: var(--card-bg); font-weight: 600; border: 1px solid var(--card-border); margin-top: 14px; }
