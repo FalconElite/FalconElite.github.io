@@ -48,7 +48,7 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 40px 20px;
+            padding: 60px 20px;
             line-height: 1.6;
             overflow-x: hidden;
             position: relative;
@@ -156,81 +156,71 @@
         }
 
         /* ==========================================================================
-           4. MAIN CONTAINER & HEADER STYLES
+           4. MAIN CONTAINER & FRAMELESS HEADER STYLES
            ========================================================================== */
         .container {
             width: 100%;
             max-width: 680px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
             z-index: 1;
         }
 
-        .profile-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-main);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            overflow: hidden;
+        /* Borderless Header Layout */
+        .profile-header {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
+            padding: 10px 0 20px 0;
             position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: var(--transition);
         }
 
-        /* Header Banner Area */
-        .profile-banner {
-            width: 100%;
-            height: 140px;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(18, 20, 26, 0.9) 100%);
-            position: relative;
-            background-size: cover;
-            background-position: center;
-        }
-
-        /* Profile Avatar Container */
+        /* Large Floating Avatar Container */
         .avatar-wrapper {
             position: relative;
-            margin-top: -60px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .avatar-img {
-            width: 110px;
-            height: 110px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.25);
             object-fit: cover;
-            background-color: #161b22;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            background-color: #0d0e12;
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.12), 0 12px 30px rgba(0, 0, 0, 0.8);
+            transition: var(--transition);
+        }
+
+        .avatar-img:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 45px rgba(255, 255, 255, 0.25), 0 12px 30px rgba(0, 0, 0, 0.9);
         }
 
         /* Live Badge Indicator */
         .live-badge {
             position: absolute;
-            bottom: 4px;
-            right: 4px;
+            bottom: 8px;
+            right: 8px;
             background: var(--live-red);
             color: #ffffff;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             font-weight: 800;
-            padding: 3px 8px;
-            border-radius: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
             letter-spacing: 0.5px;
             display: flex;
             align-items: center;
-            gap: 4px;
-            border: 2px solid #0b0c10;
+            gap: 5px;
+            border: 2px solid var(--bg-base);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
 
         .live-dot {
-            width: 6px;
-            height: 6px;
+            width: 7px;
+            height: 7px;
             background-color: #ffffff;
             border-radius: 50%;
             animation: livePulse 1.5s infinite ease-in-out;
@@ -243,31 +233,33 @@
 
         /* Profile Info */
         .profile-info {
-            padding: 0 24px 28px 24px;
             width: 100%;
         }
 
         .profile-title {
-            font-size: 1.6rem;
+            font-size: 2rem;
             font-weight: 800;
             color: var(--text-primary);
             letter-spacing: -0.5px;
             margin-bottom: 4px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.8);
         }
 
         .profile-handle {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: var(--text-secondary);
             margin-bottom: 12px;
             font-weight: 500;
+            letter-spacing: 0.2px;
         }
 
         .profile-bio {
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: var(--text-primary);
-            max-width: 500px;
+            max-width: 480px;
             margin: 0 auto;
-            opacity: 0.9;
+            opacity: 0.85;
+            font-weight: 400;
         }
     </style>
 </head>
@@ -282,12 +274,9 @@
     <!-- Main Content Container -->
     <div class="container">
         
-        <!-- STEP 2: PROFILE HEADER CARD -->
-        <header class="profile-card">
-            <!-- Banner Image or Gradient Top -->
-            <div class="profile-banner"></div>
-
-            <!-- Avatar & Live Badge -->
+        <!-- STEP 2: FRAMELESS PROFILE HEADER -->
+        <header class="profile-header">
+            <!-- Large Avatar & Live Badge -->
             <div class="avatar-wrapper">
                 <img src="FalconLogo.png" alt="FalconElite Logo" class="avatar-img">
                 <div class="live-badge">
