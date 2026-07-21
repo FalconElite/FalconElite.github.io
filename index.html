@@ -133,24 +133,23 @@
 
     <script>
         // STREAK CALCULATOR (Locked to Mountain Time)
-        const startDate = new Date('2019-01-02T00:00:00');
-        const manualOffset = 0; 
-
         function updateStreak() {
-            // Get current time in Mountain Time
+            const manualOffset = 0; 
+
+            // Get current year, month, and day specifically in Mountain Time
             const now = new Date();
-            const mtDateString = now.toLocaleString("en-US", { timeZone: "America/Denver" });
-            const mtNow = new Date(mtDateString);
+            const options = { timeZone: 'America/Denver', year: 'numeric', month: '2-digit', day: '2-digit' };
+            const formatter = new Intl.DateTimeFormat('en-US', options);
+            const [{ value: month },,{ value: day },,{ value: year }] = formatter.formatToParts(now);
 
-            // Normalize both to midnight to compare calendar days
-            const start = new Date(startDate.toDateString());
-            const end = new Date(mtNow.toDateString());
+            // Construct midnight MT date directly (UTC equivalent avoids local timezone skew)
+            const mtToday = Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day));
+            const mtStart = Date.UTC(2019, 0, 2); // Jan 2, 2019
 
-            // Calculate difference in days
-            const diffTime = end - start;
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            // Difference in calendar days
+            const diffDays = Math.floor((mtToday - mtStart) / (1000 * 60 * 60 * 24));
             
-            // Add 1 to make Jan 2, 2019 = Day 1
+            // +1 to count Day 1 (Jan 2, 2019)
             const finalCount = diffDays + 1 + manualOffset;
             
             document.getElementById('streakDays').textContent = finalCount.toLocaleString();
