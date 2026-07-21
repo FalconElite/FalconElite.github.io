@@ -41,9 +41,8 @@
 
         body::after {
             content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
             filter: blur(40px); opacity: 0; z-index: -2;
-            animation: lightningFlash 10s infinite;
+            animation: lightningFlash 18s infinite;
         }
 
         .fog-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -3; overflow: hidden; pointer-events: none; }
@@ -53,11 +52,34 @@
         @keyframes stormAtmosphere { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
         @keyframes rollFogRight { 0% { transform: translateX(0); } 100% { transform: translateX(30%); } }
         
+        /* BRANDED LIGHTNING FLASHES (Majority White, Periodic Twitch Purple & YouTube Red) */
         @keyframes lightningFlash { 
-            0%, 86%, 94%, 100% { opacity: 0; } 
-            87% { opacity: 0.4; } 
-            89% { opacity: 0.8; } 
+            0%, 20%, 40%, 60%, 80%, 100% { opacity: 0; } 
+            
+            /* Flash 1: Standard White */
+            12% { background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.25) 0%, transparent 70%); opacity: 0.7; }
+            13% { opacity: 0; }
+            14% { background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.35) 0%, transparent 70%); opacity: 0.9; }
+
+            /* Flash 2: Twitch Purple */
+            34% { background: radial-gradient(circle at 80% 20%, rgba(145, 70, 255, 0.3) 0%, transparent 70%); opacity: 0.8; }
+            35% { opacity: 0; }
+            36% { background: radial-gradient(circle at 80% 20%, rgba(145, 70, 255, 0.45) 0%, transparent 70%); opacity: 1; }
+
+            /* Flash 3: Standard White */
+            52% { background: radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.25) 0%, transparent 70%); opacity: 0.7; }
+            53% { opacity: 0; }
+            54% { background: radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.35) 0%, transparent 70%); opacity: 0.9; }
+
+            /* Flash 4: YouTube Red */
+            76% { background: radial-gradient(circle at 20% 70%, rgba(255, 0, 0, 0.25) 0%, transparent 70%); opacity: 0.7; }
+            77% { opacity: 0; }
+            78% { background: radial-gradient(circle at 20% 70%, rgba(255, 0, 0, 0.4) 0%, transparent 70%); opacity: 0.95; }
+
+            /* Flash 5: Standard White */
+            92% { background: radial-gradient(circle at 85% 80%, rgba(255, 255, 255, 0.2) 0%, transparent 70%); opacity: 0.6; }
         }
+
         @keyframes nameFlicker { 
             0%, 86%, 94%, 100% { color: #f0f6fc; text-shadow: none; } 
             87% { color: #ffffff; text-shadow: 0 0 10px #ffffff; } 
