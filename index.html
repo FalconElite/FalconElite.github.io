@@ -72,19 +72,16 @@
 <body>
 
 <div class="hub-container">
-    <!-- Branding Anchor -->
     <a id="avatarLink" href="https://twitch.tv/falconelite" class="avatar-link">
         <img src="FalconLogo.png" alt="FalconElite" class="avatar-img">
     </a>
 
-    <!-- Status & Streak (Always Visible) -->
     <div class="header-info">
         <div id="liveBadge" class="live-badge">● Live Now</div>
         <div id="gameInfo" class="game-info">Playing: <span id="gameName">...</span></div>
         <div class="streak-counter">Streak: <span id="streakCount">0</span> Days</div>
     </div>
 
-    <!-- Stream Module (Appears when live) -->
     <div id="streamEmbed" class="stream-embed">
         <div id="twitchPlayer"></div>
     </div>
@@ -106,33 +103,42 @@
             const statusRes = await fetch('https://decapi.me/twitch/uptime/falconelite');
             const statusText = await statusRes.text();
             
-            if (statusRes.ok && !statusText.includes('offline') && !statusText.includes('not found')) {
-                // UI Activation
+            const isLive = statusRes.ok && !statusText.includes('offline') && !statusText.includes('not found');
+            const embedDiv = document.getElementById('streamEmbed');
+
+            if (isLive) {
                 document.getElementById('liveBadge').classList.add('is-live');
                 document.getElementById('avatarLink').classList.add('is-live');
                 
-                // Show Embed
-                const embedDiv = document.getElementById('streamEmbed');
-                embedDiv.classList.add('is-live');
-                new Twitch.Embed("twitchPlayer", {
-                    width: "100%", height: "100%",
-                    channel: "falconelite",
-                    layout: "video",
-                    muted: true,
-                    autoplay: true
-                });
+                if (!embedDiv.classList.contains('is-live')) {
+                    embedDiv.classList.add('is-live');
+                    new Twitch.Embed("twitchPlayer", {
+                        width: "100%", height: "100%",
+                        channel: "falconelite",
+                        layout: "video",
+                        muted: true,
+                        autoplay: true
+                    });
+                }
                 
-                // Fetch Game
                 const gameRes = await fetch('https://decapi.me/twitch/game/falconelite');
                 document.getElementById('gameName').textContent = await gameRes.text();
                 document.getElementById('gameInfo').classList.add('is-live');
+            } else {
+                // Cleanup when offline
+                embedDiv.classList.remove('is-live');
+                document.getElementById('liveBadge').classList.remove('is-live');
+                document.getElementById('avatarLink').classList.remove('is-live');
+                document.getElementById('gameInfo').classList.remove('is-live');
+                document.getElementById('twitchPlayer').innerHTML = ""; // Clear player
             }
         } catch (err) { console.log('API check failed'); }
     }
 
-    // Initialize
+    // Initialize & Set Polling (60 seconds)
     updateStreak();
     checkTwitchData();
+    setInterval(checkTwitchData, 60000); 
 </script>
 </body>
 </html>
