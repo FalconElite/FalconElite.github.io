@@ -4,91 +4,168 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Nest | FalconElite</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
     <style>
         :root {
-            --bg-color: #050507;
-            --accent-red: #ff3e3e;
-            --text-main: #e0e0e0;
-            --card-border: #333;
-            --transition: all 0.3s ease;
+            --bg-base: #050507;
+            --card-bg: rgba(18, 20, 26, 0.85);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --live-red: #ff3b30;
+            --radius-main: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            text-align: center;
+        @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Inter', sans-serif; background-color: var(--bg-base); 
+            color: var(--text-primary); min-height: 100vh; display: flex; 
+            justify-content: center; align-items: center; padding: 40px 20px; 
+            overflow-x: hidden; position: relative;
         }
 
-        .hub-container { width: 90%; max-width: 600px; }
+        /* ATMOSPHERIC BACKGROUND */
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+            z-index: -4; animation: stormAtmosphere 12s infinite ease-in-out;
+        }
 
-        /* Avatar & Live Status */
-        .avatar-img { width: 150px; border-radius: 50%; border: 2px solid var(--card-border); }
-        .avatar-link.is-live .avatar-img { border-color: var(--accent-red); box-shadow: 0 0 15px var(--accent-red); }
+        /* LIGHTNING FLASH (Overlay) */
+        body::after {
+            content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            filter: blur(40px); opacity: 0; z-index: -2;
+            animation: lightningFlash 10s infinite;
+        }
 
-        /* Streak & UI */
-        .streak-counter { font-size: 2rem; margin: 20px 0; letter-spacing: 2px; }
-        .live-badge { display: none; color: var(--accent-red); font-weight: bold; text-transform: uppercase; }
-        .live-badge.is-live { display: block; }
+        .fog-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -3; overflow: hidden; pointer-events: none; }
+        .fog-layer { position: absolute; width: 200%; height: 140%; filter: blur(60px); opacity: 0.6; }
+        .fog-1 { top: -20%; background: radial-gradient(ellipse, rgba(255,255,255,0.06) 0%, transparent 70%); animation: rollFogRight 28s linear infinite alternate; }
+
+        @keyframes stormAtmosphere { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+        @keyframes rollFogRight { 0% { transform: translateX(0); } 100% { transform: translateX(30%); } }
         
-        .game-info { font-size: 0.9rem; color: #888; margin-top: 5px; display: none; }
-        .game-info.is-live { display: block; }
+        @keyframes lightningFlash { 
+            0%, 86%, 94%, 100% { opacity: 0; } 
+            87% { opacity: 0.4; } 
+            89% { opacity: 0.8; } 
+        }
+        @keyframes nameFlicker { 
+            0%, 86%, 94%, 100% { color: #f0f6fc; text-shadow: none; } 
+            87% { color: #ffffff; text-shadow: 0 0 10px #ffffff; } 
+            89% { color: #ffffff; text-shadow: 0 0 20px #ffffff; } 
+        }
+
+        /* CONTENT */
+        .container { width: 100%; max-width: 680px; display: flex; flex-direction: column; align-items: center; z-index: 1; text-align: center; }
+        
+        /* LOGO & LIVE INTERACTION */
+        .avatar-link { display: inline-block; cursor: default; pointer-events: none; transition: var(--transition); }
+        .avatar-link.is-live { cursor: pointer; pointer-events: auto; }
+        .avatar-link.is-live:hover .avatar-img { transform: scale(1.03); box-shadow: 0 0 45px rgba(255, 59, 48, 0.35); border-color: var(--live-red); }
+        
+        .avatar-img { width: 180px; height: 180px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.25); margin-bottom: 20px; box-shadow: 0 0 35px rgba(255,255,255,0.12); transition: var(--transition); }
+        
+        .status-wrapper { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .live-badge { background: var(--live-red); color: white; font-size: 0.7rem; font-weight: 800; padding: 4px 12px; border-radius: 20px; display: none; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.2); }
+        .live-badge.is-live { display: flex; }
+        .live-dot { width: 8px; height: 8px; background: white; border-radius: 50%; box-shadow: 0 0 8px white; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .game-info { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; color: var(--text-secondary); display: none; align-items: center; gap: 8px; }
+        .game-info.is-live { display: flex; }
+        #gameName { color: var(--text-primary); font-weight: 600; }
+
+        .profile-title { 
+            font-size: 2.8rem; font-weight: 800; margin-bottom: 5px; 
+            animation: nameFlicker 10s infinite; 
+        }
+
+        .profile-subtext { font-size: 0.95rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        
+        .streak-badge { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 10px 22px; border-radius: 30px; background: var(--card-bg); font-weight: 600; border: 1px solid var(--card-border); margin-top: 14px; }
+        .streak-badge::before { content: ''; position: absolute; inset: -1.5px; border-radius: 32px; padding: 1.5px; background: conic-gradient(from var(--angle), transparent 70%, #fff 95%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; animation: rotateLight 4s linear infinite; }
+        @keyframes rotateLight { to { --angle: 360deg; } }
+
+        .social-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 30px; width: 100%; max-width: 320px; }
+        .social-btn { display: flex; justify-content: center; align-items: center; height: 55px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); border-radius: var(--radius-main); color: var(--text-primary); font-size: 1.4rem; transition: var(--transition); text-decoration: none; }
+        .social-btn:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-4px); }
+        .social-btn:hover[title="Twitch"] { box-shadow: 0 0 20px #9146ff; border-color: #9146ff; }
+        .social-btn:hover[title="YouTube"] { box-shadow: 0 0 20px #ff0000; border-color: #ff0000; }
+        .social-btn:hover[title="TikTok"] { box-shadow: 0 0 20px #00f2ea; border-color: #00f2ea; }
+        .social-btn:hover[title="Twitter/X"] { box-shadow: 0 0 20px #ffffff; border-color: #ffffff; }
     </style>
 </head>
 <body>
 
-<div class="hub-container">
-    <!-- Header -->
-    <a id="avatarLink" href="https://twitch.tv/falconelite" class="avatar-link">
-        <img src="FalconLogo.png" alt="FalconElite" class="avatar-img">
-    </a>
+    <div class="fog-container"><div class="fog-layer fog-1"></div></div>
 
-    <!-- Status & Streak -->
-    <div id="liveBadge" class="live-badge">● Live Now</div>
-    <div id="gameInfo" class="game-info">Playing: <span id="gameName">...</span></div>
+    <div class="container">
+        <!-- AVATAR LINK -->
+        <a href="https://twitch.tv/FalconElite" id="avatarLink" class="avatar-link" target="_blank" rel="noopener">
+            <img src="FalconLogo.png" alt="FalconElite" class="avatar-img">
+        </a>
+        
+        <div class="status-wrapper">
+            <div id="liveBadge" class="live-badge"><span class="live-dot"></span> LIVE</div>
+            <div id="gameInfo" class="game-info"><i class="fa-solid fa-gamepad"></i> Playing: <span id="gameName">...</span></div>
+        </div>
+        
+        <h1 class="profile-title">FalconElite</h1>
+        <p class="profile-subtext">Welcome to The Nest</p>
 
-    <div class="streak-counter">
-        Streak: <span id="streakCount">0</span> Days
+        <div class="streak-badge">
+            <i class="fa-solid fa-fire" style="color: #ff9500;"></i>
+            <span><span id="streakDays">---</span> Day Stream Streak</span>
+        </div>
+
+        <div class="social-grid">
+            <a href="https://twitch.tv/FalconElite" class="social-btn" title="Twitch"><i class="fab fa-twitch"></i></a>
+            <a href="https://youtube.com/@FalconElite" class="social-btn" title="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="https://tiktok.com/@falconelite" class="social-btn" title="TikTok"><i class="fab fa-tiktok"></i></a>
+            <a href="https://twitter.com/TheFalconElite" class="social-btn" title="Twitter/X"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
     </div>
-</div>
 
-<script>
-    // 1. Streak Logic
-    function updateStreak() {
-        const startDate = new Date('2019-01-02');
-        const today = new Date();
-        const diffTime = Math.abs(today - startDate);
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        document.getElementById('streakCount').textContent = diffDays;
-    }
+    <script>
+        // STREAK CALCULATOR
+        const startDate = new Date('2019-01-02T00:00:00');
+        const manualOffset = 0; // Adjust here if needed
 
-    // 2. Twitch API Integration
-    async function checkTwitchData() {
-        try {
-            const statusRes = await fetch('https://decapi.me/twitch/uptime/falconelite');
-            const statusText = await statusRes.text();
-            
-            if (statusRes.ok && !statusText.includes('offline') && !statusText.includes('not found')) {
-                // UI Updates
-                document.getElementById('liveBadge').classList.add('is-live');
-                document.getElementById('avatarLink').classList.add('is-live');
-                
-                // Fetch Game
-                const gameRes = await fetch('https://decapi.me/twitch/game/falconelite');
-                document.getElementById('gameName').textContent = await gameRes.text();
-                document.getElementById('gameInfo').classList.add('is-live');
-            }
-        } catch (err) { console.log('API unreachable'); }
-    }
+        function updateStreak() {
+            const today = new Date();
+            const diffTime = Math.abs(today - startDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            const finalCount = diffDays + manualOffset;
+            document.getElementById('streakDays').textContent = finalCount.toLocaleString();
+        }
+        updateStreak();
 
-    // Initialize
-    updateStreak();
-    checkTwitchData();
-</script>
+        // DYNAMIC TWITCH API CHECK
+        async function checkTwitchData() {
+            try {
+                const statusRes = await fetch('https://decapi.me/twitch/uptime/falconelite');
+                const statusText = await statusRes.text();
+                if (statusRes.ok && !statusText.includes('offline') && !statusText.includes('not found')) {
+                    document.getElementById('liveBadge').classList.add('is-live');
+                    document.getElementById('avatarLink').classList.add('is-live');
+                    
+                    const gameRes = await fetch('https://decapi.me/twitch/game/falconelite');
+                    document.getElementById('gameName').textContent = await gameRes.text();
+                    document.getElementById('gameInfo').classList.add('is-live');
+                }
+            } catch (err) { console.log('API unreachable'); }
+        }
+        checkTwitchData();
+    </script>
 </body>
 </html>
