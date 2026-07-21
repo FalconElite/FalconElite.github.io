@@ -4,15 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Nest | FalconElite</title>
-    <!-- Twitch Embed SDK -->
-    <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <style>
         :root {
             --bg-color: #050507;
             --accent-red: #ff3e3e;
             --text-main: #e0e0e0;
             --card-border: #333;
-            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition: all 0.4s ease;
         }
 
         body {
@@ -21,69 +19,61 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
+            align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 40px 20px;
         }
 
         .hub-container { 
-            width: 100%; 
-            max-width: 700px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
         }
 
-        /* Branding Anchor */
+        /* Branding */
         .avatar-img { 
-            width: 120px; 
+            width: 150px; 
             border-radius: 50%; 
             border: 2px solid var(--card-border);
             transition: var(--transition);
         }
         .avatar-link.is-live .avatar-img { 
             border-color: var(--accent-red); 
-            box-shadow: 0 0 20px rgba(255, 62, 62, 0.3);
+            box-shadow: 0 0 20px rgba(255, 62, 62, 0.4);
         }
 
-        /* Header Info */
-        .header-info { text-align: center; }
-        .streak-counter { font-size: 1.5rem; letter-spacing: 2px; margin-top: 10px; }
-        .live-badge { display: none; color: var(--accent-red); font-weight: bold; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+        /* Status & Info */
+        .header-info { margin-top: 20px; }
+        .live-badge { 
+            display: none; 
+            color: var(--accent-red); 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            font-size: 0.9rem; 
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
         .live-badge.is-live { display: block; }
+        
         .game-info { font-size: 0.9rem; color: #888; margin-top: 5px; display: none; }
         .game-info.is-live { display: block; }
 
-        /* Stream Module */
-        .stream-embed {
-            width: 100%;
-            display: none; 
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            margin-top: 10px;
-        }
-        .stream-embed.is-live { display: block; }
-        #twitchPlayer { width: 100%; aspect-ratio: 16 / 9; }
+        .streak-counter { font-size: 1.8rem; letter-spacing: 2px; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="hub-container">
+    <!-- Branding Anchor -->
     <a id="avatarLink" href="https://twitch.tv/falconelite" class="avatar-link">
         <img src="FalconLogo.png" alt="FalconElite" class="avatar-img">
     </a>
 
+    <!-- Status & Streak -->
     <div class="header-info">
         <div id="liveBadge" class="live-badge">● Live Now</div>
         <div id="gameInfo" class="game-info">Playing: <span id="gameName">...</span></div>
         <div class="streak-counter">Streak: <span id="streakCount">0</span> Days</div>
-    </div>
-
-    <div id="streamEmbed" class="stream-embed">
-        <div id="twitchPlayer"></div>
     </div>
 </div>
 
@@ -97,48 +87,26 @@
         document.getElementById('streakCount').textContent = diffDays;
     }
 
-    // 2. Twitch API Integration
+    // 2. Twitch API Integration (Runs once on load)
     async function checkTwitchData() {
         try {
             const statusRes = await fetch('https://decapi.me/twitch/uptime/falconelite');
             const statusText = await statusRes.text();
             
-            const isLive = statusRes.ok && !statusText.includes('offline') && !statusText.includes('not found');
-            const embedDiv = document.getElementById('streamEmbed');
-
-            if (isLive) {
+            if (statusRes.ok && !statusText.includes('offline') && !statusText.includes('not found')) {
                 document.getElementById('liveBadge').classList.add('is-live');
                 document.getElementById('avatarLink').classList.add('is-live');
                 
-                if (!embedDiv.classList.contains('is-live')) {
-                    embedDiv.classList.add('is-live');
-                    new Twitch.Embed("twitchPlayer", {
-                        width: "100%", height: "100%",
-                        channel: "falconelite",
-                        layout: "video",
-                        muted: true,
-                        autoplay: true
-                    });
-                }
-                
                 const gameRes = await fetch('https://decapi.me/twitch/game/falconelite');
-                document.getElementById('gameName').textContent = await gameRes.text();
+                const gameName = await gameRes.text();
+                document.getElementById('gameName').textContent = gameName;
                 document.getElementById('gameInfo').classList.add('is-live');
-            } else {
-                // Cleanup when offline
-                embedDiv.classList.remove('is-live');
-                document.getElementById('liveBadge').classList.remove('is-live');
-                document.getElementById('avatarLink').classList.remove('is-live');
-                document.getElementById('gameInfo').classList.remove('is-live');
-                document.getElementById('twitchPlayer').innerHTML = ""; // Clear player
             }
         } catch (err) { console.log('API check failed'); }
     }
 
-    // Initialize & Set Polling (60 seconds)
     updateStreak();
     checkTwitchData();
-    setInterval(checkTwitchData, 60000); 
 </script>
 </body>
 </html>
