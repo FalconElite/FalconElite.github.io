@@ -10,70 +10,50 @@
             --accent-red: #ff3e3e;
             --text-main: #e0e0e0;
             --card-border: #333;
-            --transition: all 0.4s ease;
+            --transition: all 0.3s ease;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-        }
-
-        .hub-container { 
             text-align: center;
-            width: 90%;
-            max-width: 400px;
         }
 
-        /* Branding */
-        .avatar-img { 
-            width: 150px; 
-            border-radius: 50%; 
-            border: 2px solid var(--card-border);
-            transition: var(--transition);
-        }
-        .avatar-link.is-live .avatar-img { 
-            border-color: var(--accent-red); 
-            box-shadow: 0 0 20px rgba(255, 62, 62, 0.4);
-        }
+        .hub-container { width: 90%; max-width: 600px; }
 
-        /* Status & Info */
-        .header-info { margin-top: 20px; }
-        .live-badge { 
-            display: none; 
-            color: var(--accent-red); 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            font-size: 0.9rem; 
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
+        /* Avatar & Live Status */
+        .avatar-img { width: 150px; border-radius: 50%; border: 2px solid var(--card-border); }
+        .avatar-link.is-live .avatar-img { border-color: var(--accent-red); box-shadow: 0 0 15px var(--accent-red); }
+
+        /* Streak & UI */
+        .streak-counter { font-size: 2rem; margin: 20px 0; letter-spacing: 2px; }
+        .live-badge { display: none; color: var(--accent-red); font-weight: bold; text-transform: uppercase; }
         .live-badge.is-live { display: block; }
         
         .game-info { font-size: 0.9rem; color: #888; margin-top: 5px; display: none; }
         .game-info.is-live { display: block; }
-
-        .streak-counter { font-size: 1.8rem; letter-spacing: 2px; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="hub-container">
-    <!-- Branding Anchor -->
+    <!-- Header -->
     <a id="avatarLink" href="https://twitch.tv/falconelite" class="avatar-link">
         <img src="FalconLogo.png" alt="FalconElite" class="avatar-img">
     </a>
 
     <!-- Status & Streak -->
-    <div class="header-info">
-        <div id="liveBadge" class="live-badge">● Live Now</div>
-        <div id="gameInfo" class="game-info">Playing: <span id="gameName">...</span></div>
-        <div class="streak-counter">Streak: <span id="streakCount">0</span> Days</div>
+    <div id="liveBadge" class="live-badge">● Live Now</div>
+    <div id="gameInfo" class="game-info">Playing: <span id="gameName">...</span></div>
+
+    <div class="streak-counter">
+        Streak: <span id="streakCount">0</span> Days
     </div>
 </div>
 
@@ -87,24 +67,26 @@
         document.getElementById('streakCount').textContent = diffDays;
     }
 
-    // 2. Twitch API Integration (Runs once on load)
+    // 2. Twitch API Integration
     async function checkTwitchData() {
         try {
             const statusRes = await fetch('https://decapi.me/twitch/uptime/falconelite');
             const statusText = await statusRes.text();
             
             if (statusRes.ok && !statusText.includes('offline') && !statusText.includes('not found')) {
+                // UI Updates
                 document.getElementById('liveBadge').classList.add('is-live');
                 document.getElementById('avatarLink').classList.add('is-live');
                 
+                // Fetch Game
                 const gameRes = await fetch('https://decapi.me/twitch/game/falconelite');
-                const gameName = await gameRes.text();
-                document.getElementById('gameName').textContent = gameName;
+                document.getElementById('gameName').textContent = await gameRes.text();
                 document.getElementById('gameInfo').classList.add('is-live');
             }
-        } catch (err) { console.log('API check failed'); }
+        } catch (err) { console.log('API unreachable'); }
     }
 
+    // Initialize
     updateStreak();
     checkTwitchData();
 </script>
