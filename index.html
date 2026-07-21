@@ -28,7 +28,7 @@
         body { 
             font-family: 'Inter', sans-serif; background-color: var(--bg-base); 
             color: var(--text-primary); min-height: 100vh; display: flex; 
-            justify-content: center; align-items: center; padding: 40px 20px; 
+            justify-content: center; align-items: center; padding: 40px 20px 80px 20px; 
             overflow-x: hidden; position: relative;
         }
 
@@ -98,6 +98,26 @@
         .social-btn:hover[title="YouTube"] { box-shadow: 0 0 20px #ff0000; border-color: #ff0000; }
         .social-btn:hover[title="TikTok"] { box-shadow: 0 0 20px #00f2ea; border-color: #00f2ea; }
         .social-btn:hover[title="Twitter/X"] { box-shadow: 0 0 20px #ffffff; border-color: #ffffff; }
+
+        /* MONOCHROME SYSTEM FOOTER */
+        .system-footer {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(5, 5, 7, 0.9);
+            border-top: 1px solid var(--card-border);
+            padding: 12px 20px;
+            display: flex; justify-content: center; gap: 25px;
+            font-family: 'Inter', monospace;
+            font-size: 0.75rem; letter-spacing: 1px; color: var(--text-secondary);
+            backdrop-filter: blur(10px); z-index: 10;
+        }
+        .status-item { display: flex; align-items: center; gap: 8px; }
+        .ping-dot { 
+            width: 6px; height: 6px; 
+            background: #ffffff; 
+            border-radius: 50%; 
+            box-shadow: 0 0 8px #ffffff; 
+            animation: pulse 2s infinite; 
+        }
     </style>
 </head>
 <body>
@@ -119,7 +139,7 @@
         <p class="profile-subtext">Welcome to The Nest</p>
 
         <div class="streak-badge">
-            <i class="fa-solid fa-fire" style="color: #ff9500;"></i>
+            <i class="fa-solid fa-fire" style="color: #ffffff;"></i>
             <span><span id="streakDays">---</span> Day Stream Streak</span>
         </div>
 
@@ -130,6 +150,16 @@
             <a href="https://twitter.com/TheFalconElite" class="social-btn" title="Twitter/X"><i class="fa-brands fa-x-twitter"></i></a>
         </div>
     </div>
+
+    <!-- SYSTEM STATUS FOOTER -->
+    <footer class="system-footer">
+        <div class="status-item">
+            <span class="ping-dot"></span> SYSTEM: OPERATIONAL
+        </div>
+        <div class="status-item">
+            <i class="fa-regular fa-clock"></i> <span id="clock">00:00:00</span> MT
+        </div>
+    </footer>
 
     <script>
         // STREAK CALCULATOR (Locked to Mountain Time)
@@ -155,6 +185,21 @@
             document.getElementById('streakDays').textContent = finalCount.toLocaleString();
         }
         updateStreak();
+
+        // SYSTEM CLOCK (Mountain Time 24-Hour Format)
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString("en-US", { 
+                timeZone: "America/Denver", 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            document.getElementById('clock').textContent = timeString;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
 
         // DYNAMIC TWITCH API CHECK
         async function checkTwitchData() {
