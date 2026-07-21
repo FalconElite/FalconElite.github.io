@@ -140,13 +140,19 @@
             // Get current time in Mountain Time
             const now = new Date();
             const mtDateString = now.toLocaleString("en-US", { timeZone: "America/Denver" });
-            const mtDate = new Date(mtDateString);
+            const mtNow = new Date(mtDateString);
 
-            // Calculate difference
-            const diffTime = Math.abs(mtDate - startDate);
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            // Normalize both to midnight to compare calendar days
+            const start = new Date(startDate.toDateString());
+            const end = new Date(mtNow.toDateString());
+
+            // Calculate difference in days
+            const diffTime = end - start;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
             
-            const finalCount = diffDays + manualOffset;
+            // Add 1 to make Jan 2, 2019 = Day 1
+            const finalCount = diffDays + 1 + manualOffset;
+            
             document.getElementById('streakDays').textContent = finalCount.toLocaleString();
         }
         updateStreak();
