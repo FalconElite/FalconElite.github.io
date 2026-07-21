@@ -39,7 +39,6 @@
             z-index: -4; animation: stormAtmosphere 12s infinite ease-in-out;
         }
 
-        /* LIGHTNING FLASH (Overlay) */
         body::after {
             content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
@@ -85,11 +84,7 @@
         .game-info.is-live { display: flex; }
         #gameName { color: var(--text-primary); font-weight: 600; }
 
-        .profile-title { 
-            font-size: 2.8rem; font-weight: 800; margin-bottom: 5px; 
-            animation: nameFlicker 10s infinite; 
-        }
-
+        .profile-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 5px; animation: nameFlicker 10s infinite; }
         .profile-subtext { font-size: 0.95rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         
         .streak-badge { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 10px 22px; border-radius: 30px; background: var(--card-bg); font-weight: 600; border: 1px solid var(--card-border); margin-top: 14px; }
@@ -137,14 +132,20 @@
     </div>
 
     <script>
-        // STREAK CALCULATOR
+        // STREAK CALCULATOR (Locked to Mountain Time)
         const startDate = new Date('2019-01-02T00:00:00');
-        const manualOffset = 0; // Adjust here if needed
+        const manualOffset = 0; 
 
         function updateStreak() {
-            const today = new Date();
-            const diffTime = Math.abs(today - startDate);
+            // Get current time in Mountain Time
+            const now = new Date();
+            const mtDateString = now.toLocaleString("en-US", { timeZone: "America/Denver" });
+            const mtDate = new Date(mtDateString);
+
+            // Calculate difference
+            const diffTime = Math.abs(mtDate - startDate);
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            
             const finalCount = diffDays + manualOffset;
             document.getElementById('streakDays').textContent = finalCount.toLocaleString();
         }
