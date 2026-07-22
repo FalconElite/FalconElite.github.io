@@ -164,11 +164,38 @@
             background: rgba(255, 255, 255, 0.07);
             border-color: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
         }
         .discord-info { text-align: left; }
-        .discord-title { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
-        .discord-sub { font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; }
-        .discord-icon { font-size: 1.5rem; color: var(--text-primary); }
+        
+        /* RETRO TERMINAL TYPING EFFECT */
+        .discord-title { 
+            font-weight: 800; 
+            font-size: 0.95rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            letter-spacing: 1px;
+            font-family: 'Inter', monospace;
+        }
+
+        /* 1980s CRT BLINKING CURSOR */
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background-color: var(--text-primary);
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: crtBlink 0.8s steps(2, start) infinite;
+        }
+
+        @keyframes crtBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .discord-sub { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
 
         /* MONOCHROME SYSTEM FOOTER */
         .system-footer {
@@ -223,11 +250,14 @@
             <a href="https://twitter.com/TheFalconElite" class="social-btn" title="Twitter/X" target="_blank" rel="noopener"><i class="fa-brands fa-x-twitter"></i></a>
         </div>
 
-        <!-- OPTION 1: DISCORD PERSONAL COMMUNITY BLOCK -->
+        <!-- RETRO TERMINAL DISCORD CARD -->
         <a href="https://discord.gg/YOUR_DISCORD_CODE" class="discord-card" target="_blank" rel="noopener">
             <div class="discord-info">
-                <div class="discord-title"><i class="fab fa-discord"></i> Community Lounge</div>
-                <div class="discord-sub">Hang out off-stream & get stream alerts</div>
+                <div class="discord-title">
+                    <i class="fab fa-discord"></i> 
+                    <span id="typedDiscordTitle"></span><span class="terminal-cursor"></span>
+                </div>
+                <div class="discord-sub">Stream alerts, tech chat & off-stream hangout</div>
             </div>
             <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-secondary);"></i>
         </a>
@@ -294,6 +324,25 @@
             } catch (err) { console.log('API unreachable'); }
         }
         checkTwitchData();
+
+        // 1980s TERMINAL INPUT TYPING ANIMATION
+        function typeTerminalCommand() {
+            const textToType = "THE NEST // DISCORD";
+            const target = document.getElementById("typedDiscordTitle");
+            let index = 0;
+
+            setTimeout(() => {
+                const typingInterval = setInterval(() => {
+                    if (index < textToType.length) {
+                        target.textContent += textToType.charAt(index);
+                        index++;
+                    } else {
+                        clearInterval(typingInterval);
+                    }
+                }, 60);
+            }, 400);
+        }
+        typeTerminalCommand();
     </script>
 </body>
 </html>
