@@ -373,20 +373,20 @@
         async function fetchYouTubeStats() {
             const channelId = 'UCwokRBrW4p_aWtHMRRjIAOw';
             try {
-                const res = await fetch(`https://yt.lemnoslife.com/channels?id=${channelId}&part=statistics`);
+                const res = await fetch(`https://api.mixerno.space/youtube/channel/${channelId}`);
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.items && data.items.length > 0) {
-                        const count = data.items[0].statistics.subscriberCount;
-                        const parsed = parseInt(count, 10);
-                        document.getElementById('ytSubs').textContent = isNaN(parsed) ? count : parsed.toLocaleString();
+                    if (data && data.subscribers !== undefined) {
+                        const parsed = parseInt(data.subscribers, 10);
+                        document.getElementById('ytSubs').textContent = isNaN(parsed) ? data.subscribers : parsed.toLocaleString();
                         return;
                     }
                 }
             } catch (e) {
                 console.error("YouTube primary API error:", e);
             }
-            document.getElementById('ytSubs').textContent = "1.2K+";
+            // Baseline accurate count fallback
+            document.getElementById('ytSubs').textContent = "434";
         }
 
         fetchTwitchStats();
