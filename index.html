@@ -361,20 +361,27 @@
                 const twitchRes = await fetch('https://decapi.me/twitch/followcount/falconelite');
                 if (twitchRes.ok) {
                     const count = await twitchRes.text();
-                    if (!count.includes('error')) {
-                        document.getElementById('twitchFollowers').textContent = parseInt(count).toLocaleString();
+                    const parsed = parseInt(count.replace(/,/g, ''), 10);
+                    if (!isNaN(parsed)) {
+                        document.getElementById('twitchFollowers').textContent = parsed.toLocaleString();
                     }
                 }
 
-                // YouTube Subscriber Count (Replace Channel ID when available)
-                const ytRes = await fetch('https://decapi.me/youtube/subcount/falconelite');
+                // YouTube Subscriber Count
+                const ytChannelId = 'UCwokRBrW4p_aWtHMRRjIAOw'; 
+                const ytRes = await fetch(`https://decapi.me/youtube/subcount/${ytChannelId}`);
                 if (ytRes.ok) {
                     const count = await ytRes.text();
-                    if (!count.includes('error')) {
-                        document.getElementById('ytSubs').textContent = parseInt(count).toLocaleString();
+                    const parsed = parseInt(count.replace(/,/g, ''), 10);
+                    if (!isNaN(parsed)) {
+                        document.getElementById('ytSubs').textContent = parsed.toLocaleString();
+                    } else {
+                        document.getElementById('ytSubs').textContent = count; 
                     }
                 }
-            } catch (e) { console.log("Metrics API offline"); }
+            } catch (e) { 
+                console.log("Metrics API offline"); 
+            }
         }
         fetchPlatformStats();
 
