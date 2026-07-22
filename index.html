@@ -81,7 +81,7 @@
             89% { color: #ffffff; text-shadow: 0 0 20px #ffffff; } 
         }
 
-        /* CONTENT */
+        /* CONTENT CONTAINER */
         .container { width: 100%; max-width: 680px; display: flex; flex-direction: column; align-items: center; z-index: 1; text-align: center; }
         
         /* LOGO & LIVE INTERACTION */
@@ -104,6 +104,40 @@
         .profile-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 5px; animation: nameFlicker 10s infinite; }
         .profile-subtext { font-size: 0.95rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         
+        /* DUAL TELEMETRY METRICS ROW */
+        .metrics-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            width: 100%;
+            max-width: 320px;
+            justify-content: center;
+        }
+
+        .metric-pill {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 30px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+            transition: var(--transition);
+        }
+
+        .metric-pill:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .metric-pill.twitch:hover { border-color: #9146ff; box-shadow: 0 0 15px rgba(145, 70, 255, 0.25); }
+        .metric-pill.youtube:hover { border-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.25); }
+
         /* GLOWING STREAK BADGE */
         .streak-badge { 
             position: relative; 
@@ -116,7 +150,7 @@
             font-weight: 600; 
             font-size: 0.9rem;
             border: 1px solid var(--card-border); 
-            margin-top: 14px; 
+            margin-top: 10px; 
             text-decoration: none;
             color: var(--text-primary);
         }
@@ -168,7 +202,6 @@
         }
         .discord-info { text-align: left; }
         
-        /* RETRO TERMINAL TYPING EFFECT */
         .discord-title { 
             font-weight: 800; 
             font-size: 0.95rem; 
@@ -179,7 +212,6 @@
             font-family: 'Inter', monospace;
         }
 
-        /* 1980s CRT BLINKING CURSOR */
         .terminal-cursor {
             display: inline-block;
             width: 8px;
@@ -197,7 +229,7 @@
 
         .discord-sub { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
 
-        /* MONOCHROME SYSTEM FOOTER */
+        /* FOOTER */
         .system-footer {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: rgba(5, 5, 7, 0.9);
@@ -235,6 +267,18 @@
         
         <h1 class="profile-title">FalconElite</h1>
         <p class="profile-subtext">Welcome to The Nest</p>
+
+        <!-- DUAL TELEMETRY PILLS -->
+        <div class="metrics-row">
+            <div class="metric-pill twitch">
+                <i class="fab fa-twitch" style="color: #9146ff;"></i>
+                <span id="twitchFollowers">---</span> Followers
+            </div>
+            <div class="metric-pill youtube">
+                <i class="fab fa-youtube" style="color: #ff0000;"></i>
+                <span id="ytSubs">---</span> Subs
+            </div>
+        </div>
 
         <!-- STREAK COUNTER BADGE -->
         <div class="streak-badge">
@@ -274,17 +318,16 @@
     </footer>
 
     <script>
-        // STREAK CALCULATOR (Locked to Mountain Time)
+        // STREAK CALCULATOR
         function updateStreak() {
             const manualOffset = 0; 
-
             const now = new Date();
             const options = { timeZone: 'America/Denver', year: 'numeric', month: '2-digit', day: '2-digit' };
             const formatter = new Intl.DateTimeFormat('en-US', options);
             const [{ value: month },,{ value: day },,{ value: year }] = formatter.formatToParts(now);
 
             const mtToday = Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day));
-            const mtStart = Date.UTC(2019, 0, 2); // Jan 2, 2019
+            const mtStart = Date.UTC(2019, 0, 2); 
 
             const diffDays = Math.floor((mtToday - mtStart) / (1000 * 60 * 60 * 24));
             const finalCount = diffDays + 1 + manualOffset;
@@ -293,7 +336,7 @@
         }
         updateStreak();
 
-        // SYSTEM CLOCK (Mountain Time 24-Hour Format)
+        // SYSTEM CLOCK
         function updateClock() {
             const now = new Date();
             const timeString = now.toLocaleTimeString("en-US", { 
@@ -308,24 +351,69 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // DYNAMIC TWITCH API CHECK
+        // 1. FETCH TWITCH FOLLOWERS
+        async function fetchTwitchStats() {
+            try {
+                const res = await fetch('https://decapi.me/twitch/followcount/falconelite');
+                if (res.ok) {
+                    const txt = await res.text();
+                    const parsed = parseInt(txt.replace(/,/g, ''), 10);
+                    if (!isNaN(parsed)) {
+                        document.getElementById('twitchFollowers').textContent = parsed.toLocaleString();
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.error("Twitch fetch error:", e);
+            }
+            document.getElementById('twitchFollowers').textContent = "2.8K+";
+        }
+
+        // 2. FETCH YOUTUBE SUBSCRIBERS
+        async function fetchYouTubeStats() {
+            const channelId = 'UCwokRBrW4p_aWtHMRRjIAOw';
+            try {
+                const res = await fetch(`https://api.mixerno.space/youtube/channel/${channelId}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.subscribers !== undefined) {
+                        const parsed = parseInt(data.subscribers, 10);
+                        document.getElementById('ytSubs').textContent = isNaN(parsed) ? data.subscribers : parsed.toLocaleString();
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.error("YouTube primary API error:", e);
+            }
+            // Baseline accurate count fallback
+            document.getElementById('ytSubs').textContent = "434";
+        }
+
+        fetchTwitchStats();
+        fetchYouTubeStats();
+
+        // DYNAMIC TWITCH LIVE STATUS
         async function checkTwitchData() {
             try {
                 const statusRes = await fetch('https://decapi.me/twitch/uptime/falconelite');
-                const statusText = await statusRes.text();
-                if (statusRes.ok && !statusText.includes('offline') && !statusText.includes('not found')) {
-                    document.getElementById('liveBadge').classList.add('is-live');
-                    document.getElementById('avatarLink').classList.add('is-live');
-                    
-                    const gameRes = await fetch('https://decapi.me/twitch/game/falconelite');
-                    document.getElementById('gameName').textContent = await gameRes.text();
-                    document.getElementById('gameInfo').classList.add('is-live');
+                if (statusRes.ok) {
+                    const statusText = await statusRes.text();
+                    if (!statusText.toLowerCase().includes('offline') && !statusText.toLowerCase().includes('error')) {
+                        document.getElementById('liveBadge').classList.add('is-live');
+                        document.getElementById('avatarLink').classList.add('is-live');
+                        
+                        const gameRes = await fetch('https://decapi.me/twitch/game/falconelite');
+                        if (gameRes.ok) {
+                            document.getElementById('gameName').textContent = await gameRes.text();
+                            document.getElementById('gameInfo').classList.add('is-live');
+                        }
+                    }
                 }
-            } catch (err) { console.log('API unreachable'); }
+            } catch (err) { console.log('Uptime API unreachable'); }
         }
         checkTwitchData();
 
-        // 1980s TERMINAL INPUT TYPING ANIMATION
+        // TERMINAL TYPING ANIMATION
         function typeTerminalCommand() {
             const textToType = "THE NEST // DISCORD";
             const target = document.getElementById("typedDiscordTitle");
