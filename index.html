@@ -104,8 +104,8 @@
         .profile-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 5px; animation: nameFlicker 10s infinite; }
         .profile-subtext { font-size: 0.95rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         
-        /* GLOWING BADGES (Streak & Discord) */
-        .streak-badge, .discord-pill { 
+        /* GLOWING STREAK BADGE */
+        .streak-badge { 
             position: relative; 
             display: inline-flex; 
             align-items: center; 
@@ -119,10 +119,9 @@
             margin-top: 14px; 
             text-decoration: none;
             color: var(--text-primary);
-            transition: var(--transition);
         }
         
-        .streak-badge::before, .discord-pill::before { 
+        .streak-badge::before { 
             content: ''; 
             position: absolute; 
             inset: -1.5px; 
@@ -134,15 +133,9 @@
             animation: rotateLight 4s linear infinite; 
         }
 
-        .discord-pill { margin-top: 20px; }
-        .discord-pill:hover { 
-            transform: translateY(-2px); 
-            background: rgba(255, 255, 255, 0.1); 
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.15); 
-        }
-
         @keyframes rotateLight { to { --angle: 360deg; } }
 
+        /* SOCIAL GRID */
         .social-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 30px; width: 100%; max-width: 320px; }
         .social-btn { display: flex; justify-content: center; align-items: center; height: 55px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); border-radius: var(--radius-main); color: var(--text-primary); font-size: 1.4rem; transition: var(--transition); text-decoration: none; }
         .social-btn:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-4px); }
@@ -150,6 +143,32 @@
         .social-btn:hover[title="YouTube"] { box-shadow: 0 0 20px #ff0000; border-color: #ff0000; }
         .social-btn:hover[title="TikTok"] { box-shadow: 0 0 20px #00f2ea; border-color: #00f2ea; }
         .social-btn:hover[title="Twitter/X"] { box-shadow: 0 0 20px #ffffff; border-color: #ffffff; }
+
+        /* PERSONAL DISCORD CARD */
+        .discord-card {
+            margin-top: 25px;
+            width: 100%;
+            max-width: 320px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-main);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        .discord-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .discord-info { text-align: left; }
+        .discord-title { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+        .discord-sub { font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; }
+        .discord-icon { font-size: 1.5rem; color: var(--text-primary); }
 
         /* MONOCHROME SYSTEM FOOTER */
         .system-footer {
@@ -204,10 +223,13 @@
             <a href="https://twitter.com/TheFalconElite" class="social-btn" title="Twitter/X" target="_blank" rel="noopener"><i class="fa-brands fa-x-twitter"></i></a>
         </div>
 
-        <!-- OPTION 3: BEHIND THE SCENES DISCORD PILL -->
-        <a href="https://discord.gg/YOUR_DISCORD_CODE" class="discord-pill" target="_blank" rel="noopener">
-            <i class="fab fa-discord"></i>
-            <span>Behind The Scenes Community</span>
+        <!-- OPTION 1: DISCORD PERSONAL COMMUNITY BLOCK -->
+        <a href="https://discord.gg/YOUR_DISCORD_CODE" class="discord-card" target="_blank" rel="noopener">
+            <div class="discord-info">
+                <div class="discord-title"><i class="fab fa-discord"></i> Community Lounge</div>
+                <div class="discord-sub">Hang out off-stream & get stream alerts</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-secondary);"></i>
         </a>
     </div>
 
