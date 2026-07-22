@@ -356,31 +356,41 @@
 
         // DYNAMIC METRICS FETCH (Twitch & YouTube Stats)
         async function fetchPlatformStats() {
+            async function fetchText(url) {
+                try {
+                    const res = await fetch(url);
+                    if (res.ok) return await res.text();
+                } catch (e) {
+                    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+                    const proxyRes = await fetch(proxyUrl);
+                    if (proxyRes.ok) return await proxyRes.text();
+                }
+                return null;
+            }
+
             try {
-                // Twitch Follower Count
-                const twitchRes = await fetch('https://decapi.me/twitch/followcount/falconelite');
-                if (twitchRes.ok) {
-                    const count = await twitchRes.text();
-                    const parsed = parseInt(count.replace(/,/g, ''), 10);
+                // Fetch Twitch Followers
+                const twitchRaw = await fetchText('https://decapi.me/twitch/followcount/falconelite');
+                if (twitchRaw) {
+                    const parsed = parseInt(twitchRaw.replace(/,/g, ''), 10);
                     if (!isNaN(parsed)) {
                         document.getElementById('twitchFollowers').textContent = parsed.toLocaleString();
                     }
                 }
 
-                // YouTube Subscriber Count
-                const ytChannelId = 'UCwokRBrW4p_aWtHMRRjIAOw'; 
-                const ytRes = await fetch(`https://decapi.me/youtube/subcount/${ytChannelId}`);
-                if (ytRes.ok) {
-                    const count = await ytRes.text();
-                    const parsed = parseInt(count.replace(/,/g, ''), 10);
+                // Fetch YouTube Subscribers
+                const ytChannelId = 'UCwokRBrW4p_aWtHMRRjIAOw';
+                const ytRaw = await fetchText(`https://decapi.me/youtube/subcount/${ytChannelId}`);
+                if (ytRaw) {
+                    const parsed = parseInt(ytRaw.replace(/,/g, ''), 10);
                     if (!isNaN(parsed)) {
                         document.getElementById('ytSubs').textContent = parsed.toLocaleString();
-                    } else {
-                        document.getElementById('ytSubs').textContent = count; 
+                    } else if (!ytRaw.includes('error')) {
+                        document.getElementById('ytSubs').textContent = ytRaw.trim();
                     }
                 }
-            } catch (e) { 
-                console.log("Metrics API offline"); 
+            } catch (e) {
+                console.log("Metrics fetch failed:", e);
             }
         }
         fetchPlatformStats();
