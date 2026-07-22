@@ -104,6 +104,40 @@
         .profile-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 5px; animation: nameFlicker 10s infinite; }
         .profile-subtext { font-size: 0.95rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         
+        /* DUAL TELEMETRY METRICS ROW */
+        .metrics-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            width: 100%;
+            max-width: 320px;
+            justify-content: center;
+        }
+
+        .metric-pill {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 30px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+            transition: var(--transition);
+        }
+
+        .metric-pill:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .metric-pill.twitch:hover { border-color: #9146ff; box-shadow: 0 0 15px rgba(145, 70, 255, 0.25); }
+        .metric-pill.youtube:hover { border-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.25); }
+
         /* GLOWING STREAK BADGE */
         .streak-badge { 
             position: relative; 
@@ -116,7 +150,7 @@
             font-weight: 600; 
             font-size: 0.9rem;
             border: 1px solid var(--card-border); 
-            margin-top: 14px; 
+            margin-top: 10px; 
             text-decoration: none;
             color: var(--text-primary);
         }
@@ -236,6 +270,18 @@
         <h1 class="profile-title">FalconElite</h1>
         <p class="profile-subtext">Welcome to The Nest</p>
 
+        <!-- DUAL TELEMETRY PILLS (TWITCH / YOUTUBE) -->
+        <div class="metrics-row">
+            <div class="metric-pill twitch">
+                <i class="fab fa-twitch" style="color: #9146ff;"></i>
+                <span id="twitchFollowers">---</span> Followers
+            </div>
+            <div class="metric-pill youtube">
+                <i class="fab fa-youtube" style="color: #ff0000;"></i>
+                <span id="ytSubs">---</span> Subs
+            </div>
+        </div>
+
         <!-- STREAK COUNTER BADGE -->
         <div class="streak-badge">
             <i class="fa-solid fa-fire" style="color: #ffffff;"></i>
@@ -307,6 +353,30 @@
         }
         setInterval(updateClock, 1000);
         updateClock();
+
+        // DYNAMIC METRICS FETCH (Twitch & YouTube Stats)
+        async function fetchPlatformStats() {
+            try {
+                // Twitch Follower Count
+                const twitchRes = await fetch('https://decapi.me/twitch/followcount/falconelite');
+                if (twitchRes.ok) {
+                    const count = await twitchRes.text();
+                    if (!count.includes('error')) {
+                        document.getElementById('twitchFollowers').textContent = parseInt(count).toLocaleString();
+                    }
+                }
+
+                // YouTube Subscriber Count (Replace Channel ID when available)
+                const ytRes = await fetch('https://decapi.me/youtube/subcount/falconelite');
+                if (ytRes.ok) {
+                    const count = await ytRes.text();
+                    if (!count.includes('error')) {
+                        document.getElementById('ytSubs').textContent = parseInt(count).toLocaleString();
+                    }
+                }
+            } catch (e) { console.log("Metrics API offline"); }
+        }
+        fetchPlatformStats();
 
         // DYNAMIC TWITCH API CHECK
         async function checkTwitchData() {
