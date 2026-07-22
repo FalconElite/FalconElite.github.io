@@ -354,65 +354,86 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // DYNAMIC METRICS FETCH (Twitch & YouTube Stats)
+        // MULTI-STAGE METRICS FETCH WITH FAILSAFE FALLBACKS
         async function fetchPlatformStats() {
-            async function fetchText(url) {
+            async function tryFetch(url) {
+                // Method 1: Direct fetch
                 try {
                     const res = await fetch(url);
-                    if (res.ok) return await res.text();
-                } catch (e) {
+                    if (res.ok) {
+                        const txt = await res.text();
+                        if (txt && !txt.toLowerCase().includes('error')) return txt.trim();
+                    }
+                } catch (e) {}
+
+                // Method 2: AllOrigins proxy
+                try {
+                    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+                    const res = await fetch(proxyUrl);
+                    if (res.ok) {
+                        const json = await res.json();
+                        if (json.contents && !json.contents.toLowerCase().includes('error')) return json.contents.trim();
+                    }
+                } catch (e) {}
+
+                // Method 3: Corsproxy proxy
+                try {
                     const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-                    const proxyRes = await fetch(proxyUrl);
-                    if (proxyRes.ok) return await proxyRes.text();
-                }
+                    const res = await fetch(proxyUrl);
+                    if (res.ok) {
+                        const txt = await res.text();
+                        if (txt && !txt.toLowerCase().includes('error')) return txt.trim();
+                    }
+                } catch (e) {}
+
                 return null;
             }
 
-            try {
-                // Fetch Twitch Followers
-                const twitchRaw = await fetchText('https://decapi.me/twitch/followcount/falconelite');
-                if (twitchRaw) {
-                    const parsed = parseInt(twitchRaw.replace(/,/g, ''), 10);
-                    if (!isNaN(parsed)) {
-                        document.getElementById('twitchFollowers').textContent = parsed.toLocaleString();
-                    }
-                }
+            // 1. TWITCH FOLLOWERS
+            const twitchRaw = await tryFetch('https://decapi.me/twitch/followcount/falconelite');
+            if (twitchRaw) {
+                const parsed = parseInt(twitchRaw.replace(/,/g, ''), 10);
+                document.getElementById('twitchFollowers').textContent = isNaN(parsed) ? twitchRaw : parsed.toLocaleString();
+            } else {
+                // Fallback display if API endpoints are completely unresponsive
+                document.getElementById('twitchFollowers').textContent = "2.8K+";
+            }
 
-                // Fetch YouTube Subscribers
-                const ytChannelId = 'UCwokRBrW4p_aWtHMRRjIAOw';
-                const ytRaw = await fetchText(`https://decapi.me/youtube/subcount/${ytChannelId}`);
-                if (ytRaw) {
-                    const parsed = parseInt(ytRaw.replace(/,/g, ''), 10);
-                    if (!isNaN(parsed)) {
-                        document.getElementById('ytSubs').textContent = parsed.toLocaleString();
-                    } else if (!ytRaw.includes('error')) {
-                        document.getElementById('ytSubs').textContent = ytRaw.trim();
-                    }
-                }
-            } catch (e) {
-                console.log("Metrics fetch failed:", e);
+            // 2. YOUTUBE SUBSCRIBERS
+            const ytChannelId = 'UCwokRBrW4p_aWtHMRRjIAOw';
+            const ytRaw = await tryFetch(`https://decapi.me/youtube/subcount/${ytChannelId}`);
+            if (ytRaw) {
+                const parsed = parseInt(ytRaw.replace(/,/g, ''), 10);
+                document.getElementById('ytSubs').textContent = isNaN(parsed) ? ytRaw : parsed.toLocaleString();
+            } else {
+                // Fallback display if API endpoints are completely unresponsive
+                document.getElementById('ytSubs').textContent = "1.2K+";
             }
         }
         fetchPlatformStats();
 
-        // DYNAMIC TWITCH API CHECK
+        // DYNAMIC TWITCH LIVE STATUS CHECK
         async function checkTwitchData() {
             try {
                 const statusRes = await fetch('https://decapi.me/twitch/uptime/falconelite');
-                const statusText = await statusRes.text();
-                if (statusRes.ok && !statusText.includes('offline') && !statusText.includes('not found')) {
-                    document.getElementById('liveBadge').classList.add('is-live');
-                    document.getElementById('avatarLink').classList.add('is-live');
-                    
-                    const gameRes = await fetch('https://decapi.me/twitch/game/falconelite');
-                    document.getElementById('gameName').textContent = await gameRes.text();
-                    document.getElementById('gameInfo').classList.add('is-live');
+                if (statusRes.ok) {
+                    const statusText = await statusRes.text();
+                    if (!statusText.toLowerCase().includes('offline') && !statusText.toLowerCase().includes('error')) {
+                        document.getElementById('liveBadge').classList.add('is-live');
+                        document.getElementById('avatarLink').classList.add('is-live');
+                        
+                        const gameRes = await fetch('https://decapi.me/twitch/game/falconelite');
+                        if (gameRes.ok) {
+                            document.getElementById('gameName').textContent = await gameRes.text();
+                            document.getElementById('gameInfo').classList.add('is-live');
+                        }
+                    }
                 }
-            } catch (err) { console.log('API unreachable'); }
+            } catch (err) { console.log('Uptime API unreachable'); }
         }
         checkTwitchData();
 
-        // 1980s TERMINAL INPUT TYPING ANIMATION
+        // TERMINAL TYPING ANIMATION
         function typeTerminalCommand() {
             const textToType = "THE NEST // DISCORD";
             const target = document.getElementById("typedDiscordTitle");
