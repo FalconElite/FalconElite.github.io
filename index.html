@@ -81,7 +81,7 @@
             89% { color: #ffffff; text-shadow: 0 0 20px #ffffff; } 
         }
 
-        /* CONTENT */
+        /* CONTENT CONTAINER */
         .container { width: 100%; max-width: 680px; display: flex; flex-direction: column; align-items: center; z-index: 1; text-align: center; }
         
         /* LOGO & LIVE INTERACTION */
@@ -202,7 +202,6 @@
         }
         .discord-info { text-align: left; }
         
-        /* RETRO TERMINAL TYPING EFFECT */
         .discord-title { 
             font-weight: 800; 
             font-size: 0.95rem; 
@@ -213,7 +212,6 @@
             font-family: 'Inter', monospace;
         }
 
-        /* 1980s CRT BLINKING CURSOR */
         .terminal-cursor {
             display: inline-block;
             width: 8px;
@@ -231,7 +229,7 @@
 
         .discord-sub { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
 
-        /* MONOCHROME SYSTEM FOOTER */
+        /* FOOTER */
         .system-footer {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: rgba(5, 5, 7, 0.9);
@@ -270,7 +268,7 @@
         <h1 class="profile-title">FalconElite</h1>
         <p class="profile-subtext">Welcome to The Nest</p>
 
-        <!-- DUAL TELEMETRY PILLS (TWITCH / YOUTUBE) -->
+        <!-- DUAL TELEMETRY PILLS -->
         <div class="metrics-row">
             <div class="metric-pill twitch">
                 <i class="fab fa-twitch" style="color: #9146ff;"></i>
@@ -320,17 +318,16 @@
     </footer>
 
     <script>
-        // STREAK CALCULATOR (Locked to Mountain Time)
+        // STREAK CALCULATOR
         function updateStreak() {
             const manualOffset = 0; 
-
             const now = new Date();
             const options = { timeZone: 'America/Denver', year: 'numeric', month: '2-digit', day: '2-digit' };
             const formatter = new Intl.DateTimeFormat('en-US', options);
             const [{ value: month },,{ value: day },,{ value: year }] = formatter.formatToParts(now);
 
             const mtToday = Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day));
-            const mtStart = Date.UTC(2019, 0, 2); // Jan 2, 2019
+            const mtStart = Date.UTC(2019, 0, 2); 
 
             const diffDays = Math.floor((mtToday - mtStart) / (1000 * 60 * 60 * 24));
             const finalCount = diffDays + 1 + manualOffset;
@@ -339,7 +336,7 @@
         }
         updateStreak();
 
-        // SYSTEM CLOCK (Mountain Time 24-Hour Format)
+        // SYSTEM CLOCK
         function updateClock() {
             const now = new Date();
             const timeString = now.toLocaleTimeString("en-US", { 
@@ -354,65 +351,48 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // MULTI-STAGE METRICS FETCH WITH FAILSAFE FALLBACKS
-        async function fetchPlatformStats() {
-            async function tryFetch(url) {
-                // Method 1: Direct fetch
-                try {
-                    const res = await fetch(url);
-                    if (res.ok) {
-                        const txt = await res.text();
-                        if (txt && !txt.toLowerCase().includes('error')) return txt.trim();
+        // 1. FETCH TWITCH FOLLOWERS
+        async function fetchTwitchStats() {
+            try {
+                const res = await fetch('https://decapi.me/twitch/followcount/falconelite');
+                if (res.ok) {
+                    const txt = await res.text();
+                    const parsed = parseInt(txt.replace(/,/g, ''), 10);
+                    if (!isNaN(parsed)) {
+                        document.getElementById('twitchFollowers').textContent = parsed.toLocaleString();
+                        return;
                     }
-                } catch (e) {}
-
-                // Method 2: AllOrigins proxy
-                try {
-                    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-                    const res = await fetch(proxyUrl);
-                    if (res.ok) {
-                        const json = await res.json();
-                        if (json.contents && !json.contents.toLowerCase().includes('error')) return json.contents.trim();
-                    }
-                } catch (e) {}
-
-                // Method 3: Corsproxy proxy
-                try {
-                    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-                    const res = await fetch(proxyUrl);
-                    if (res.ok) {
-                        const txt = await res.text();
-                        if (txt && !txt.toLowerCase().includes('error')) return txt.trim();
-                    }
-                } catch (e) {}
-
-                return null;
+                }
+            } catch (e) {
+                console.error("Twitch fetch error:", e);
             }
-
-            // 1. TWITCH FOLLOWERS
-            const twitchRaw = await tryFetch('https://decapi.me/twitch/followcount/falconelite');
-            if (twitchRaw) {
-                const parsed = parseInt(twitchRaw.replace(/,/g, ''), 10);
-                document.getElementById('twitchFollowers').textContent = isNaN(parsed) ? twitchRaw : parsed.toLocaleString();
-            } else {
-                // Fallback display if API endpoints are completely unresponsive
-                document.getElementById('twitchFollowers').textContent = "2.8K+";
-            }
-
-            // 2. YOUTUBE SUBSCRIBERS
-            const ytChannelId = 'UCwokRBrW4p_aWtHMRRjIAOw';
-            const ytRaw = await tryFetch(`https://decapi.me/youtube/subcount/${ytChannelId}`);
-            if (ytRaw) {
-                const parsed = parseInt(ytRaw.replace(/,/g, ''), 10);
-                document.getElementById('ytSubs').textContent = isNaN(parsed) ? ytRaw : parsed.toLocaleString();
-            } else {
-                // Fallback display if API endpoints are completely unresponsive
-                document.getElementById('ytSubs').textContent = "1.2K+";
-            }
+            document.getElementById('twitchFollowers').textContent = "2.8K+";
         }
-        fetchPlatformStats();
 
-        // DYNAMIC TWITCH LIVE STATUS CHECK
+        // 2. FETCH YOUTUBE SUBSCRIBERS
+        async function fetchYouTubeStats() {
+            const channelId = 'UCwokRBrW4p_aWtHMRRjIAOw';
+            try {
+                const res = await fetch(`https://yt.lemnoslife.com/channels?id=${channelId}&part=statistics`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.items && data.items.length > 0) {
+                        const count = data.items[0].statistics.subscriberCount;
+                        const parsed = parseInt(count, 10);
+                        document.getElementById('ytSubs').textContent = isNaN(parsed) ? count : parsed.toLocaleString();
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.error("YouTube primary API error:", e);
+            }
+            document.getElementById('ytSubs').textContent = "1.2K+";
+        }
+
+        fetchTwitchStats();
+        fetchYouTubeStats();
+
+        // DYNAMIC TWITCH LIVE STATUS
         async function checkTwitchData() {
             try {
                 const statusRes = await fetch('https://decapi.me/twitch/uptime/falconelite');
