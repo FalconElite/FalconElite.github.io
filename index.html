@@ -178,7 +178,7 @@
         .social-btn:hover[title="TikTok"] { box-shadow: 0 0 20px #00f2ea; border-color: #00f2ea; }
         .social-btn:hover[title="Twitter/X"] { box-shadow: 0 0 20px #ffffff; border-color: #ffffff; }
 
-        /* PERSONAL DISCORD CARD */
+        /* FEATURE CARDS (DISCORD & DONATION) */
         .discord-card {
             margin-top: 25px;
             width: 100%;
@@ -200,6 +200,16 @@
             transform: translateY(-2px);
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
         }
+
+        /* DONATION CARD HOVER GLOW */
+        .donation-card {
+            margin-top: 12px; /* Tighter spacing underneath Discord card */
+        }
+        .donation-card:hover {
+            border-color: rgba(255, 59, 48, 0.4);
+            box-shadow: 0 0 20px rgba(255, 59, 48, 0.15);
+        }
+
         .discord-info { text-align: left; }
         
         .discord-title { 
@@ -302,6 +312,18 @@
                     <span id="typedDiscordTitle"></span><span class="terminal-cursor"></span>
                 </div>
                 <div class="discord-sub">Stream alerts, tech chat & off-stream hangout</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-secondary);"></i>
+        </a>
+
+        <!-- SUPPORT / DONATION CARD -->
+        <a href="YOUR_DONATION_LINK_HERE" class="discord-card donation-card" target="_blank" rel="noopener">
+            <div class="discord-info">
+                <div class="discord-title">
+                    <i class="fa-solid fa-heart" style="color: #ff3b30;"></i> 
+                    <span>SUPPORT THE STREAK</span>
+                </div>
+                <div class="discord-sub">Directly powers daily streams & tech upgrades</div>
             </div>
             <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-secondary);"></i>
         </a>
