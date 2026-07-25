@@ -110,7 +110,7 @@
             gap: 10px;
             margin-top: 14px;
             width: 100%;
-            max-width: 340px;
+            max-width: 320px;
             justify-content: center;
         }
 
@@ -169,42 +169,20 @@
 
         @keyframes rotateLight { to { --angle: 360deg; } }
 
-        /* 5-COLUMN SOCIAL GRID */
-        .social-grid { 
-            display: grid; 
-            grid-template-columns: repeat(5, 1fr); 
-            gap: 12px; 
-            margin-top: 30px; 
-            width: 100%; 
-            max-width: 340px; 
-        }
-
-        .social-btn { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 55px; 
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid var(--card-border); 
-            border-radius: var(--radius-main); 
-            color: var(--text-primary); 
-            font-size: 1.3rem; 
-            transition: var(--transition); 
-            text-decoration: none; 
-        }
-
+        /* SOCIAL GRID */
+        .social-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 30px; width: 100%; max-width: 320px; }
+        .social-btn { display: flex; justify-content: center; align-items: center; height: 55px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); border-radius: var(--radius-main); color: var(--text-primary); font-size: 1.4rem; transition: var(--transition); text-decoration: none; }
         .social-btn:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-4px); }
         .social-btn:hover[title="Twitch"] { box-shadow: 0 0 20px #9146ff; border-color: #9146ff; }
         .social-btn:hover[title="YouTube"] { box-shadow: 0 0 20px #ff0000; border-color: #ff0000; }
         .social-btn:hover[title="TikTok"] { box-shadow: 0 0 20px #00f2ea; border-color: #00f2ea; }
         .social-btn:hover[title="Twitter/X"] { box-shadow: 0 0 20px #ffffff; border-color: #ffffff; }
-        .social-btn:hover[title="Support"] { box-shadow: 0 0 20px #ff3b30; border-color: #ff3b30; }
 
-        /* PERSONAL DISCORD CARD */
+        /* FEATURE CARDS (DISCORD & DONATION) */
         .discord-card {
             margin-top: 25px;
             width: 100%;
-            max-width: 340px;
+            max-width: 320px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--card-border);
             border-radius: var(--radius-main);
@@ -215,6 +193,8 @@
             transition: var(--transition);
             text-decoration: none;
             color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
         }
         .discord-card:hover {
             background: rgba(255, 255, 255, 0.07);
@@ -223,7 +203,55 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
         }
 
-        .discord-info { text-align: left; }
+        /* GOLD TO RED SHIMMER DONATION CARD */
+        .donation-card {
+            margin-top: 12px;
+            border-color: rgba(255, 215, 0, 0.25);
+        }
+
+        /* Periodic Shimmer Overlay */
+        .donation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg, 
+                transparent 0%, 
+                rgba(255, 215, 0, 0.15) 35%, 
+                rgba(255, 59, 48, 0.35) 65%, 
+                transparent 100%
+            );
+            transform: skewX(-25deg);
+            animation: goldRedShimmer 6s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes goldRedShimmer {
+            0%, 70% { left: -150%; opacity: 0; }
+            71% { opacity: 1; }
+            88% { left: 150%; opacity: 1; }
+            89%, 100% { opacity: 0; left: 150%; }
+        }
+
+        .donation-card:hover {
+            border-color: rgba(255, 59, 48, 0.5);
+            box-shadow: 0 0 25px rgba(255, 59, 48, 0.25), 0 0 10px rgba(255, 215, 0, 0.2);
+        }
+
+        .heart-icon {
+            color: #ff3b30;
+            animation: heartPulse 3s infinite ease-in-out;
+        }
+
+        @keyframes heartPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); filter: drop-shadow(0 0 6px rgba(255, 59, 48, 0.8)); }
+        }
+
+        .discord-info { text-align: left; position: relative; z-index: 2; }
         
         .discord-title { 
             font-weight: 800; 
@@ -309,13 +337,12 @@
             <span><span id="streakDays">---</span> Day Stream Streak</span>
         </div>
 
-        <!-- 5-ITEM SOCIAL GRID -->
+        <!-- SOCIAL GRID -->
         <div class="social-grid">
             <a href="https://twitch.tv/FalconElite" class="social-btn" title="Twitch" target="_blank" rel="noopener"><i class="fab fa-twitch"></i></a>
             <a href="https://youtube.com/@FalconElite" class="social-btn" title="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
             <a href="https://tiktok.com/@falconelite" class="social-btn" title="TikTok" target="_blank" rel="noopener"><i class="fab fa-tiktok"></i></a>
             <a href="https://twitter.com/TheFalconElite" class="social-btn" title="Twitter/X" target="_blank" rel="noopener"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="YOUR_DONATION_LINK_HERE" class="social-btn" title="Support" target="_blank" rel="noopener"><i class="fa-solid fa-heart" style="color: #ff3b30;"></i></a>
         </div>
 
         <!-- RETRO TERMINAL DISCORD CARD -->
@@ -327,7 +354,19 @@
                 </div>
                 <div class="discord-sub">Stream alerts, tech chat & off-stream hangout</div>
             </div>
-            <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-secondary);"></i>
+            <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-secondary); position: relative; z-index: 2;"></i>
+        </a>
+
+        <!-- SUPPORT / DONATION CARD WITH GOLD-TO-RED SHIMMER -->
+        <a href="https://streamlabs.com/falconelite/tip" class="discord-card donation-card" target="_blank" rel="noopener">
+            <div class="discord-info">
+                <div class="discord-title">
+                    <i class="fa-solid fa-heart heart-icon"></i> 
+                    <span>SUPPORT THE STREAK</span>
+                </div>
+                <div class="discord-sub">Directly powers daily streams & tech upgrades</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-secondary); position: relative; z-index: 2;"></i>
         </a>
     </div>
 
