@@ -4,7 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Nest | FalconElite</title>
-    
+
+    <meta name="description" content="The Nest — FalconElite's hub. Daily Twitch streams since 01/01/2019, never missed a day. Socials, Discord and more.">
+    <meta name="theme-color" content="#050507">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="The Nest | FalconElite">
+    <meta property="og:description" content="Daily Twitch streams since 01/01/2019 without missing a day. Welcome to The Nest.">
+    <meta name="twitter:card" content="summary">
+    <!-- For link previews with a picture, add an absolute URL, e.g.:
+         <meta property="og:image" content="https://YOUR-USERNAME.github.io/YOUR-REPO/FalconLogo.png"> -->
+    <link rel="icon" href="FalconLogo.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -25,11 +35,15 @@
         @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: 'Inter', sans-serif; background-color: var(--bg-base); 
-            color: var(--text-primary); min-height: 100vh; display: flex; 
-            justify-content: center; align-items: center; padding: 40px 20px 80px 20px; 
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-base);
+            color: var(--text-primary); min-height: 100vh; min-height: 100dvh; display: flex;
+            justify-content: center; align-items: center; padding: 40px 20px 90px 20px;
             overflow-x: hidden; position: relative;
+        }
+
+        a:focus-visible, button:focus-visible {
+            outline: 2px solid #ffffff; outline-offset: 3px;
         }
 
         /* ATMOSPHERIC BACKGROUND */
@@ -51,11 +65,11 @@
 
         @keyframes stormAtmosphere { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
         @keyframes rollFogRight { 0% { transform: translateX(0); } 100% { transform: translateX(30%); } }
-        
+
         /* BRANDED LIGHTNING FLASHES */
-        @keyframes lightningFlash { 
-            0%, 20%, 40%, 60%, 80%, 100% { opacity: 0; } 
-            
+        @keyframes lightningFlash {
+            0%, 20%, 40%, 60%, 80%, 100% { opacity: 0; }
+
             12% { background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.25) 0%, transparent 70%); opacity: 0.7; }
             13% { opacity: 0; }
             14% { background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.35) 0%, transparent 70%); opacity: 0.9; }
@@ -75,22 +89,23 @@
             92% { background: radial-gradient(circle at 85% 80%, rgba(255, 255, 255, 0.2) 0%, transparent 70%); opacity: 0.6; }
         }
 
-        @keyframes nameFlicker { 
-            0%, 86%, 94%, 100% { color: #f0f6fc; text-shadow: none; } 
-            87% { color: #ffffff; text-shadow: 0 0 10px #ffffff; } 
-            89% { color: #ffffff; text-shadow: 0 0 20px #ffffff; } 
+        @keyframes nameFlicker {
+            0%, 86%, 94%, 100% { color: #f0f6fc; text-shadow: none; }
+            87% { color: #ffffff; text-shadow: 0 0 10px #ffffff; }
+            89% { color: #ffffff; text-shadow: 0 0 20px #ffffff; }
         }
 
         /* CONTENT CONTAINER */
         .container { width: 100%; max-width: 680px; display: flex; flex-direction: column; align-items: center; z-index: 1; text-align: center; }
-        
+
         /* LOGO & LIVE INTERACTION */
         .avatar-link { display: inline-block; cursor: default; pointer-events: none; transition: var(--transition); }
         .avatar-link.is-live { cursor: pointer; pointer-events: auto; }
         .avatar-link.is-live:hover .avatar-img { transform: scale(1.03); box-shadow: 0 0 45px rgba(255, 59, 48, 0.35); border-color: var(--live-red); }
-        
+
         .avatar-img { width: 180px; height: 180px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.25); margin-bottom: 20px; box-shadow: 0 0 35px rgba(255,255,255,0.12); transition: var(--transition); }
-        
+        .avatar-link.is-live .avatar-img { border-color: var(--live-red); box-shadow: 0 0 35px rgba(255, 59, 48, 0.25); }
+
         .status-wrapper { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 10px; }
         .live-badge { background: var(--live-red); color: white; font-size: 0.7rem; font-weight: 800; padding: 4px 12px; border-radius: 20px; display: none; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.2); }
         .live-badge.is-live { display: flex; }
@@ -103,7 +118,7 @@
 
         .profile-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 5px; animation: nameFlicker 10s infinite; }
         .profile-subtext { font-size: 0.95rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-        
+
         /* DUAL TELEMETRY METRICS ROW */
         .metrics-row {
             display: flex;
@@ -139,35 +154,42 @@
         .metric-pill.youtube:hover { border-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.25); }
 
         /* GLOWING STREAK BADGE */
-        .streak-badge { 
-            position: relative; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 10px; 
-            padding: 10px 22px; 
-            border-radius: 30px; 
-            background: var(--card-bg); 
-            font-weight: 600; 
+        .streak-badge {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 22px;
+            border-radius: 30px;
+            background: var(--card-bg);
+            font-weight: 600;
             font-size: 0.9rem;
-            border: 1px solid var(--card-border); 
-            margin-top: 10px; 
+            border: 1px solid var(--card-border);
+            margin-top: 10px;
             text-decoration: none;
             color: var(--text-primary);
         }
-        
-        .streak-badge::before { 
-            content: ''; 
-            position: absolute; 
-            inset: -1.5px; 
-            border-radius: 32px; 
-            padding: 1.5px; 
-            background: conic-gradient(from var(--angle), transparent 70%, #fff 95%); 
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); 
-            mask-composite: exclude; 
-            animation: rotateLight 4s linear infinite; 
+
+        .streak-badge::before {
+            content: '';
+            position: absolute;
+            inset: -1.5px;
+            border-radius: 32px;
+            padding: 1.5px;
+            background: conic-gradient(from var(--angle), transparent 70%, #fff 95%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            animation: rotateLight 4s linear infinite;
         }
 
         @keyframes rotateLight { to { --angle: 360deg; } }
+
+        /* STREAK DETAILS + MILESTONE */
+        .streak-since { margin-top: 10px; font-size: 0.72rem; color: var(--text-secondary); letter-spacing: 1px; text-transform: uppercase; }
+        .milestone { width: 100%; max-width: 320px; margin-top: 10px; }
+        .milestone-track { height: 6px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; border: 1px solid var(--card-border); }
+        .milestone-bar { height: 100%; width: 0%; background: linear-gradient(90deg, rgba(255,255,255,0.35), #ffffff); border-radius: 6px; box-shadow: 0 0 10px rgba(255,255,255,0.5); transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .milestone-text { margin-top: 6px; font-size: 0.72rem; color: var(--text-secondary); letter-spacing: 0.5px; }
 
         /* SOCIAL GRID */
         .social-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 30px; width: 100%; max-width: 320px; }
@@ -177,6 +199,27 @@
         .social-btn:hover[title="YouTube"] { box-shadow: 0 0 20px #ff0000; border-color: #ff0000; }
         .social-btn:hover[title="TikTok"] { box-shadow: 0 0 20px #00f2ea; border-color: #00f2ea; }
         .social-btn:hover[title="Twitter/X"] { box-shadow: 0 0 20px #ffffff; border-color: #ffffff; }
+
+        /* LIVE EMBED (only appears while live) */
+        .embed-card {
+            display: none;
+            margin-top: 25px;
+            width: 100%;
+            max-width: 480px;
+            border: 1px solid rgba(255, 59, 48, 0.45);
+            border-radius: var(--radius-main);
+            background: rgba(255, 59, 48, 0.06);
+            overflow: hidden;
+        }
+        .embed-card.is-live { display: block; }
+        .embed-toggle {
+            width: 100%; padding: 16px 20px; background: none; border: none; cursor: pointer;
+            color: var(--text-primary); font-family: inherit; font-weight: 800; font-size: 0.95rem;
+            letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .embed-toggle:hover { background: rgba(255, 59, 48, 0.12); }
+        .embed-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; }
+        .embed-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
         /* FEATURE CARDS (DISCORD & DONATION) */
         .discord-card {
@@ -218,10 +261,10 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(
-                90deg, 
-                transparent 0%, 
-                rgba(255, 215, 0, 0.15) 35%, 
-                rgba(255, 59, 48, 0.35) 65%, 
+                90deg,
+                transparent 0%,
+                rgba(255, 215, 0, 0.15) 35%,
+                rgba(255, 59, 48, 0.35) 65%,
                 transparent 100%
             );
             transform: skewX(-25deg);
@@ -252,13 +295,13 @@
         }
 
         .discord-info { text-align: left; position: relative; z-index: 2; }
-        
-        .discord-title { 
-            font-weight: 800; 
-            font-size: 0.95rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
+
+        .discord-title {
+            font-weight: 800;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             letter-spacing: 1px;
             font-family: 'Inter', monospace;
         }
@@ -286,18 +329,33 @@
             background: rgba(5, 5, 7, 0.9);
             border-top: 1px solid var(--card-border);
             padding: 12px 20px;
-            display: flex; justify-content: center; gap: 25px;
+            display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 25px;
             font-family: 'Inter', monospace;
             font-size: 0.75rem; letter-spacing: 1px; color: var(--text-secondary);
             backdrop-filter: blur(10px); z-index: 10;
         }
         .status-item { display: flex; align-items: center; gap: 8px; }
-        .ping-dot { 
-            width: 6px; height: 6px; 
-            background: #ffffff; 
-            border-radius: 50%; 
-            box-shadow: 0 0 8px #ffffff; 
-            animation: pulse 2s infinite; 
+        .ping-dot {
+            width: 6px; height: 6px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #ffffff;
+            animation: pulse 2s infinite;
+        }
+        .ping-dot.is-live { background: var(--live-red); box-shadow: 0 0 8px var(--live-red); }
+
+        /* SMALL SCREENS */
+        @media (max-width: 480px) {
+            body { padding-bottom: 110px; }
+            .profile-title { font-size: 2.3rem; }
+            .avatar-img { width: 150px; height: 150px; }
+            .system-footer { gap: 6px 16px; font-size: 0.68rem; }
+        }
+
+        /* RESPECT REDUCED-MOTION SETTINGS (lightning/flicker can bother some people) */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+            body::after { display: none; }
         }
     </style>
 </head>
@@ -305,17 +363,17 @@
 
     <div class="fog-container"><div class="fog-layer fog-1"></div></div>
 
-    <div class="container">
+    <main class="container">
         <!-- AVATAR LINK -->
-        <a href="https://twitch.tv/FalconElite" id="avatarLink" class="avatar-link" target="_blank" rel="noopener">
-            <img src="FalconLogo.png" alt="FalconElite" class="avatar-img">
+        <a href="https://twitch.tv/FalconElite" id="avatarLink" class="avatar-link" target="_blank" rel="noopener" aria-label="Watch FalconElite live on Twitch">
+            <img src="FalconLogo.png" alt="FalconElite logo" class="avatar-img" width="180" height="180">
         </a>
-        
+
         <div class="status-wrapper">
             <div id="liveBadge" class="live-badge"><span class="live-dot"></span> LIVE</div>
             <div id="gameInfo" class="game-info"><i class="fa-solid fa-gamepad"></i> Playing: <span id="gameName">...</span></div>
         </div>
-        
+
         <h1 class="profile-title">FalconElite</h1>
         <p class="profile-subtext">Welcome to The Nest</p>
 
@@ -336,20 +394,35 @@
             <i class="fa-solid fa-fire" style="color: #ffffff;"></i>
             <span><span id="streakDays">---</span> Day Stream Streak</span>
         </div>
+        <div class="streak-since" id="streakSince"></div>
+
+        <!-- NEXT MILESTONE -->
+        <div class="milestone" aria-label="Progress to next streak milestone">
+            <div class="milestone-track"><div class="milestone-bar" id="milestoneBar"></div></div>
+            <div class="milestone-text" id="milestoneText"></div>
+        </div>
 
         <!-- SOCIAL GRID -->
         <div class="social-grid">
-            <a href="https://twitch.tv/FalconElite" class="social-btn" title="Twitch" target="_blank" rel="noopener"><i class="fab fa-twitch"></i></a>
-            <a href="https://youtube.com/@FalconElite" class="social-btn" title="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
-            <a href="https://tiktok.com/@falconelite" class="social-btn" title="TikTok" target="_blank" rel="noopener"><i class="fab fa-tiktok"></i></a>
-            <a href="https://twitter.com/TheFalconElite" class="social-btn" title="Twitter/X" target="_blank" rel="noopener"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://twitch.tv/FalconElite" class="social-btn" title="Twitch" aria-label="Twitch" target="_blank" rel="noopener"><i class="fab fa-twitch"></i></a>
+            <a href="https://youtube.com/@FalconElite" class="social-btn" title="YouTube" aria-label="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+            <a href="https://tiktok.com/@falconelite" class="social-btn" title="TikTok" aria-label="TikTok" target="_blank" rel="noopener"><i class="fab fa-tiktok"></i></a>
+            <a href="https://twitter.com/TheFalconElite" class="social-btn" title="Twitter/X" aria-label="Twitter / X" target="_blank" rel="noopener"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+
+        <!-- LIVE EMBED: appears only while live, loads the player only when clicked -->
+        <div class="embed-card" id="embedCard">
+            <button class="embed-toggle" id="embedToggle" type="button">
+                <span class="live-dot"></span> WATCH LIVE RIGHT HERE
+            </button>
+            <div class="embed-frame" id="embedFrame" hidden></div>
         </div>
 
         <!-- RETRO TERMINAL DISCORD CARD -->
-        <a href="https://discord.gg/sZR6G3WBfr" class="discord-card" target="_blank" rel="noopener">
+        <a href="https://discord.gg/sZR6G3WBfr" class="discord-card" target="_blank" rel="noopener" aria-label="Join the FalconElite Discord">
             <div class="discord-info">
                 <div class="discord-title">
-                    <i class="fab fa-discord"></i> 
+                    <i class="fab fa-discord"></i>
                     <span id="typedDiscordTitle"></span><span class="terminal-cursor"></span>
                 </div>
                 <div class="discord-sub">Stream alerts, tech chat & off-stream hangout</div>
@@ -361,14 +434,14 @@
         <a href="https://streamlabs.com/falconelite/tip" class="discord-card donation-card" target="_blank" rel="noopener">
             <div class="discord-info">
                 <div class="discord-title">
-                    <i class="fa-solid fa-heart heart-icon"></i> 
+                    <i class="fa-solid fa-heart heart-icon"></i>
                     <span>SUPPORT THE STREAK (DONATE)</span>
                 </div>
                 <div class="discord-sub">Tip to directly keep the daily stream going strong</div>
             </div>
             <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: var(--text-secondary); position: relative; z-index: 2;"></i>
         </a>
-    </div>
+    </main>
 
     <!-- SYSTEM STATUS FOOTER -->
     <footer class="system-footer">
@@ -376,110 +449,223 @@
             <span class="ping-dot"></span> SYSTEM: OPERATIONAL
         </div>
         <div class="status-item">
+            <span class="ping-dot" id="streamDot"></span> STREAM: <span id="streamStatus">OFFLINE</span>
+        </div>
+        <div class="status-item">
             <i class="fa-regular fa-clock"></i> <span id="clock">00:00:00</span> MT
         </div>
     </footer>
 
     <script>
-        // STREAK CALCULATOR
-        function updateStreak() {
-            const manualOffset = 0; 
-            const now = new Date();
-            const options = { timeZone: 'America/Denver', year: 'numeric', month: '2-digit', day: '2-digit' };
-            const formatter = new Intl.DateTimeFormat('en-US', options);
-            const [{ value: month },,{ value: day },,{ value: year }] = formatter.formatToParts(now);
+        const $ = (id) => document.getElementById(id);
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const CHANNEL = 'falconelite';
 
-            const mtToday = Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day));
-            const mtStart = Date.UTC(2019, 0, 2); 
+        // Safe localStorage (can be blocked in private windows)
+        const store = {
+            get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+            set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+        };
 
-            const diffDays = Math.floor((mtToday - mtStart) / (1000 * 60 * 60 * 24));
-            const finalCount = diffDays + 1 + manualOffset;
-            
-            document.getElementById('streakDays').textContent = finalCount.toLocaleString();
+        async function fetchWithTimeout(url, ms = 6000) {
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => ctrl.abort(), ms);
+            try { return await fetch(url, { signal: ctrl.signal }); }
+            finally { clearTimeout(timer); }
         }
-        updateStreak();
 
-        // SYSTEM CLOCK
+        // ---------- STREAK ----------
+        const MANUAL_OFFSET = 0;
+        // Same math as before: this date counts as Day 1.
+        // If Jan 1, 2019 itself should be Day 1, change this to Date.UTC(2019, 0, 1).
+        const STREAK_DAY_ONE = Date.UTC(2019, 0, 2);
+        const MILESTONE_STEP = 500;
+
+        function getMountainDate() {
+            const parts = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'America/Denver', year: 'numeric', month: '2-digit', day: '2-digit'
+            }).formatToParts(new Date());
+            const get = (t) => parseInt(parts.find(p => p.type === t).value, 10);
+            return { year: get('year'), month: get('month'), day: get('day') };
+        }
+
+        function getStreakCount() {
+            const d = getMountainDate();
+            const today = Date.UTC(d.year, d.month - 1, d.day);
+            return Math.floor((today - STREAK_DAY_ONE) / 86400000) + 1 + MANUAL_OFFSET;
+        }
+
+        let streakAnimated = false;
+        function renderStreak() {
+            const count = getStreakCount();
+            const el = $('streakDays');
+
+            if (!streakAnimated && !reducedMotion) {
+                streakAnimated = true;
+                const start = performance.now();
+                const duration = 1200;
+                const tick = (now) => {
+                    const p = Math.min((now - start) / duration, 1);
+                    const eased = 1 - Math.pow(1 - p, 3);
+                    el.textContent = Math.round(count * eased).toLocaleString();
+                    if (p < 1) requestAnimationFrame(tick);
+                };
+                requestAnimationFrame(tick);
+            } else {
+                streakAnimated = true;
+                el.textContent = count.toLocaleString();
+            }
+
+            // "Since" line
+            const d = getMountainDate();
+            const totalMonths = (d.year - 2019) * 12 + (d.month - 1);
+            const yrs = Math.floor(totalMonths / 12);
+            const mos = totalMonths % 12;
+            $('streakSince').textContent = `Since Jan 1, 2019 · ${yrs} yrs ${mos} mos`;
+
+            // Next milestone
+            const prev = Math.floor(count / MILESTONE_STEP) * MILESTONE_STEP;
+            const next = prev + MILESTONE_STEP;
+            if (count === prev) {
+                $('milestoneBar').style.width = '100%';
+                $('milestoneText').textContent = `Milestone reached: ${count.toLocaleString()} days!`;
+            } else {
+                $('milestoneBar').style.width = (((count - prev) / MILESTONE_STEP) * 100).toFixed(1) + '%';
+                $('milestoneText').textContent = `${(next - count).toLocaleString()} days to ${next.toLocaleString()}`;
+            }
+        }
+        renderStreak();
+        setInterval(renderStreak, 60000); // catches the midnight rollover
+
+        // ---------- CLOCK ----------
         function updateClock() {
             const now = new Date();
-            const timeString = now.toLocaleTimeString("en-US", { 
-                timeZone: "America/Denver", 
-                hour12: false, 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit' 
+            $('clock').textContent = now.toLocaleTimeString("en-US", {
+                timeZone: "America/Denver",
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
             });
-            document.getElementById('clock').textContent = timeString;
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        // 1. FETCH TWITCH FOLLOWERS
+        // ---------- STATS (cached so a failed API never shows a blank) ----------
         async function fetchTwitchStats() {
             try {
-                const res = await fetch('https://decapi.me/twitch/followcount/falconelite');
+                const res = await fetchWithTimeout(`https://decapi.me/twitch/followcount/${CHANNEL}`);
                 if (res.ok) {
                     const txt = await res.text();
                     const parsed = parseInt(txt.replace(/,/g, ''), 10);
                     if (!isNaN(parsed)) {
-                        document.getElementById('twitchFollowers').textContent = parsed.toLocaleString();
+                        $('twitchFollowers').textContent = parsed.toLocaleString();
+                        store.set('nest_twitch', String(parsed));
                         return;
                     }
                 }
             } catch (e) {
                 console.error("Twitch fetch error:", e);
             }
-            document.getElementById('twitchFollowers').textContent = "2.8K+";
+            const cached = parseInt(store.get('nest_twitch'), 10);
+            $('twitchFollowers').textContent = !isNaN(cached) ? cached.toLocaleString() : "2.8K+";
         }
 
-        // 2. FETCH YOUTUBE SUBSCRIBERS
         async function fetchYouTubeStats() {
             const channelId = 'UCwokRBrW4p_aWtHMRRjIAOw';
+            // Restricted key: only works on your site and only for the YouTube Data API v3.
+            const YT_API_KEY = 'AIzaSyCJL54l7qhCVVaa44uDBdEX4C4eRaBvhXs';
             try {
-                const res = await fetch(`https://api.mixerno.space/youtube/channel/${channelId}`);
+                const res = await fetchWithTimeout(
+                    `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${YT_API_KEY}`
+                );
                 if (res.ok) {
                     const data = await res.json();
-                    if (data && data.subscribers !== undefined) {
-                        const parsed = parseInt(data.subscribers, 10);
-                        document.getElementById('ytSubs').textContent = isNaN(parsed) ? data.subscribers : parsed.toLocaleString();
-                        return;
+                    const stats = data && data.items && data.items[0] && data.items[0].statistics;
+                    if (stats && !stats.hiddenSubscriberCount) {
+                        const parsed = parseInt(stats.subscriberCount, 10);
+                        if (!isNaN(parsed)) {
+                            $('ytSubs').textContent = parsed.toLocaleString();
+                            store.set('nest_yt', String(parsed));
+                            return;
+                        }
                     }
                 }
             } catch (e) {
                 console.error("YouTube primary API error:", e);
             }
-            // Baseline accurate count fallback
-            document.getElementById('ytSubs').textContent = "434";
+            const cached = parseInt(store.get('nest_yt'), 10);
+            $('ytSubs').textContent = !isNaN(cached) ? cached.toLocaleString() : "434";
         }
 
         fetchTwitchStats();
         fetchYouTubeStats();
 
-        // DYNAMIC TWITCH LIVE STATUS
+        // ---------- LIVE STATUS (re-checked every 90s) ----------
+        const BASE_TITLE = document.title;
+
+        function setLive(isLive, game) {
+            $('liveBadge').classList.toggle('is-live', isLive);
+            $('avatarLink').classList.toggle('is-live', isLive);
+            $('embedCard').classList.toggle('is-live', isLive && !!location.hostname);
+            $('streamDot').classList.toggle('is-live', isLive);
+            $('streamStatus').textContent = isLive ? 'LIVE' : 'OFFLINE';
+            document.title = isLive ? `🔴 LIVE | ${BASE_TITLE}` : BASE_TITLE;
+
+            const gameInfo = $('gameInfo');
+            if (isLive && game) {
+                $('gameName').textContent = game;
+                gameInfo.classList.add('is-live');
+            } else {
+                gameInfo.classList.remove('is-live');
+            }
+
+            if (!isLive) closeEmbed();
+        }
+
         async function checkTwitchData() {
             try {
-                const statusRes = await fetch('https://decapi.me/twitch/uptime/falconelite');
-                if (statusRes.ok) {
-                    const statusText = await statusRes.text();
-                    if (!statusText.toLowerCase().includes('offline') && !statusText.toLowerCase().includes('error')) {
-                        document.getElementById('liveBadge').classList.add('is-live');
-                        document.getElementById('avatarLink').classList.add('is-live');
-                        
-                        const gameRes = await fetch('https://decapi.me/twitch/game/falconelite');
-                        if (gameRes.ok) {
-                            document.getElementById('gameName').textContent = await gameRes.text();
-                            document.getElementById('gameInfo').classList.add('is-live');
-                        }
-                    }
+                const res = await fetchWithTimeout(`https://decapi.me/twitch/uptime/${CHANNEL}`);
+                if (!res.ok) return;
+                const text = (await res.text()).trim().toLowerCase();
+                // Live responses look like "3 hours, 12 minutes"; anything else (offline, errors) is not live.
+                const isLive = /\b(second|minute|hour|day)s?\b/.test(text) && !text.includes('offline');
+
+                let game = '';
+                if (isLive) {
+                    try {
+                        const gameRes = await fetchWithTimeout(`https://decapi.me/twitch/game/${CHANNEL}`);
+                        if (gameRes.ok) game = (await gameRes.text()).trim();
+                    } catch (e) {}
                 }
+                setLive(isLive, game);
             } catch (err) { console.log('Uptime API unreachable'); }
         }
         checkTwitchData();
+        setInterval(checkTwitchData, 90000);
 
-        // TERMINAL TYPING ANIMATION
+        // ---------- CLICK-TO-LOAD LIVE PLAYER ----------
+        function closeEmbed() {
+            const frame = $('embedFrame');
+            frame.hidden = true;
+            frame.innerHTML = '';
+        }
+        $('embedToggle').addEventListener('click', () => {
+            const frame = $('embedFrame');
+            if (!frame.hidden) { closeEmbed(); return; }
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://player.twitch.tv/?channel=${CHANNEL}&parent=${encodeURIComponent(location.hostname)}&muted=true`;
+            iframe.allowFullscreen = true;
+            iframe.title = 'FalconElite live on Twitch';
+            frame.appendChild(iframe);
+            frame.hidden = false;
+        });
+
+        // ---------- TERMINAL TYPING ANIMATION ----------
         function typeTerminalCommand() {
             const textToType = "THE NEST // DISCORD";
-            const target = document.getElementById("typedDiscordTitle");
+            const target = $("typedDiscordTitle");
+            if (reducedMotion) { target.textContent = textToType; return; }
             let index = 0;
 
             setTimeout(() => {
