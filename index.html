@@ -15,6 +15,17 @@
          <meta property="og:image" content="https://YOUR-USERNAME.github.io/YOUR-REPO/FalconLogo.png"> -->
     <link rel="icon" href="FalconLogo.png">
 
+    <!-- Intro runs once per browser tab session. Add ?intro to the URL to replay it anytime.
+         Skipped automatically for visitors who prefer reduced motion. -->
+    <script>
+        try {
+            var forceIntro = /[?&]intro\b/.test(location.search);
+            var seen = sessionStorage.getItem('nest_intro_seen');
+            var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!forceIntro && (seen || reduce)) document.documentElement.classList.add('no-intro');
+        } catch (e) {}
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -344,6 +355,54 @@
         }
         .ping-dot.is-live { background: var(--live-red); box-shadow: 0 0 8px var(--live-red); }
 
+        /* PAGE-LOAD INTRO */
+        #intro {
+            position: fixed; inset: 0; z-index: 100; background: var(--bg-base);
+            overflow: hidden; cursor: pointer;
+            transition: opacity 0.7s ease, visibility 0.7s;
+        }
+        #intro.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
+        .no-intro #intro { display: none; }
+        #intro::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 50% 42%, rgba(255,255,255,0.08) 0%, transparent 60%);
+        }
+        .intro-stage {
+            position: absolute; inset: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 12px; padding: 20px;
+            text-align: center; opacity: 0; transition: opacity 0.35s ease;
+        }
+        .intro-stage.is-on { opacity: 1; }
+        .intro-label { font-size: 0.8rem; letter-spacing: 6px; color: var(--text-secondary); text-transform: uppercase; }
+        .intro-number {
+            font-size: clamp(4rem, 19vw, 8.5rem); font-weight: 800; line-height: 1;
+            font-variant-numeric: tabular-nums; color: var(--text-primary);
+            transition: text-shadow 0.4s ease, color 0.4s ease;
+        }
+        .intro-stage.is-locked .intro-number { color: #ffffff; text-shadow: 0 0 25px rgba(255,255,255,0.7), 0 0 60px rgba(255,255,255,0.25); }
+        .intro-date { font-size: 0.85rem; letter-spacing: 3px; color: var(--text-secondary); text-transform: uppercase; font-variant-numeric: tabular-nums; }
+        .intro-note { font-size: 0.8rem; letter-spacing: 4px; color: var(--text-primary); text-transform: uppercase; opacity: 0; transition: opacity 0.4s ease; margin-top: 6px; }
+        .intro-stage.is-locked .intro-note { opacity: 1; }
+        .intro-welcome { font-size: clamp(1.6rem, 7.5vw, 3.2rem); font-weight: 800; letter-spacing: 5px; text-transform: uppercase; color: #ffffff; text-shadow: 0 0 25px rgba(255,255,255,0.5); }
+        #introWelcome.is-on .intro-welcome { animation: welcomeFlicker 1s linear 1; }
+        @keyframes welcomeFlicker {
+            0% { opacity: 0; } 10% { opacity: 1; } 18% { opacity: 0.25; } 26% { opacity: 1; }
+            40% { opacity: 0.6; } 48% { opacity: 1; } 100% { opacity: 1; }
+        }
+        .intro-flash {
+            position: absolute; inset: 0; pointer-events: none; opacity: 0;
+            background: radial-gradient(circle at 50% 45%, rgba(255,255,255,0.4) 0%, transparent 65%);
+        }
+        .intro-flash.go { animation: introFlash 0.5s ease-out 1; }
+        @keyframes introFlash { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
+        .intro-skip {
+            position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+            background: none; border: 1px solid var(--card-border); color: var(--text-secondary);
+            font-family: inherit; font-size: 0.7rem; letter-spacing: 3px; padding: 8px 18px;
+            border-radius: 20px; cursor: pointer; transition: var(--transition); text-transform: uppercase;
+        }
+        .intro-skip:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.35); }
+
         /* SMALL SCREENS */
         @media (max-width: 480px) {
             body { padding-bottom: 110px; }
@@ -360,6 +419,21 @@
     </style>
 </head>
 <body>
+
+    <!-- PAGE-LOAD INTRO -->
+    <div id="intro" aria-label="Intro animation">
+        <div class="intro-stage" id="introCount">
+            <div class="intro-label">Day</div>
+            <div class="intro-number" id="introNumber">1</div>
+            <div class="intro-date" id="introDate"></div>
+            <div class="intro-note">Days · Never missed</div>
+        </div>
+        <div class="intro-stage" id="introWelcome">
+            <div class="intro-welcome">Welcome to the Nest</div>
+        </div>
+        <div class="intro-flash" id="introFlash"></div>
+        <button class="intro-skip" id="introSkip" type="button">Skip ›</button>
+    </div>
 
     <div class="fog-container"><div class="fog-layer fog-1"></div></div>
 
@@ -660,6 +734,71 @@
             frame.appendChild(iframe);
             frame.hidden = false;
         });
+
+        // ---------- PAGE-LOAD INTRO ----------
+        // Counts from Day 1 up to today's streak, flashes, shows "Welcome to the Nest", then fades out.
+        (function runIntro() {
+            const intro = $('intro');
+            if (!intro || document.documentElement.classList.contains('no-intro')) return;
+
+            try { sessionStorage.setItem('nest_intro_seen', '1'); } catch (e) {}
+
+            const target = getStreakCount();
+            const numEl = $('introNumber');
+            const dateEl = $('introDate');
+            const countStage = $('introCount');
+            const welcomeStage = $('introWelcome');
+            const COUNT_MS = 2000;
+            const timers = [];
+            let raf = 0;
+            let finished = false;
+
+            const dateFor = (n) => new Date(STREAK_DAY_ONE + (n - 1) * 86400000)
+                .toLocaleDateString('en-US', { timeZone: 'UTC', month: 'short', year: 'numeric' }).toUpperCase();
+            const ease = (p) => p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+
+            function finish() {
+                if (finished) return;
+                finished = true;
+                cancelAnimationFrame(raf);
+                timers.forEach(clearTimeout);
+                intro.classList.add('is-done');
+                setTimeout(() => intro.remove(), 800);
+                document.removeEventListener('keydown', onKey);
+            }
+            function onKey(e) { if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') finish(); }
+            intro.addEventListener('click', finish);
+            document.addEventListener('keydown', onKey);
+
+            // 1) count up
+            countStage.classList.add('is-on');
+            const start = performance.now();
+            const tick = (now) => {
+                const p = Math.min((now - start) / COUNT_MS, 1);
+                const n = Math.max(1, Math.round(target * ease(p)));
+                numEl.textContent = n.toLocaleString();
+                dateEl.textContent = dateFor(n);
+                if (p < 1) raf = requestAnimationFrame(tick);
+            };
+            raf = requestAnimationFrame(tick);
+
+            // 2) lock on the final number
+            timers.push(setTimeout(() => {
+                numEl.textContent = target.toLocaleString();
+                dateEl.textContent = dateFor(target);
+                countStage.classList.add('is-locked');
+            }, COUNT_MS + 50));
+
+            // 3) single soft flash, swap to the welcome message
+            timers.push(setTimeout(() => {
+                $('introFlash').classList.add('go');
+                countStage.classList.remove('is-on');
+            }, 2900));
+            timers.push(setTimeout(() => welcomeStage.classList.add('is-on'), 3000));
+
+            // 4) fade into the page
+            timers.push(setTimeout(finish, 4500));
+        })();
 
         // ---------- TERMINAL TYPING ANIMATION ----------
         function typeTerminalCommand() {
