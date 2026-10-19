@@ -367,6 +367,22 @@
             content: ''; position: absolute; inset: 0;
             background: radial-gradient(circle at 50% 42%, rgba(255,255,255,0.08) 0%, transparent 60%);
         }
+        .intro-logo-wrap {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            pointer-events: none; opacity: 0; animation: logoIn 1s ease-out 0.1s forwards;
+        }
+        .intro-logo {
+            width: min(72vw, 400px); height: auto; border-radius: 50%;
+            opacity: 0.12; filter: grayscale(0.35);
+            -webkit-mask-image: radial-gradient(circle, #000 52%, transparent 71%);
+            mask-image: radial-gradient(circle, #000 52%, transparent 71%);
+            animation: logoPulse 2.6s ease-in-out 1s infinite;
+        }
+        @keyframes logoIn { to { opacity: 1; } }
+        @keyframes logoPulse {
+            0%, 100% { opacity: 0.10; transform: scale(1); }
+            50% { opacity: 0.20; transform: scale(1.05); }
+        }
         .intro-stage {
             position: absolute; inset: 0; display: flex; flex-direction: column;
             align-items: center; justify-content: center; gap: 12px; padding: 20px;
@@ -422,6 +438,7 @@
 
     <!-- PAGE-LOAD INTRO -->
     <div id="intro" aria-label="Intro animation">
+        <div class="intro-logo-wrap"><img src="FalconLogo.png" alt="" class="intro-logo"></div>
         <div class="intro-stage" id="introCount">
             <div class="intro-label">Day</div>
             <div class="intro-number" id="introNumber">1</div>
