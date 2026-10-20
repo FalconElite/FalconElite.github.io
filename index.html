@@ -214,7 +214,7 @@
         /* LIVE EMBED (only appears while live) */
         .embed-card {
             display: none;
-            margin-top: 25px;
+            margin: 4px 0 22px;
             width: 100%;
             max-width: 480px;
             border: 1px solid rgba(255, 59, 48, 0.45);
@@ -465,6 +465,14 @@
             <div id="gameInfo" class="game-info"><i class="fa-solid fa-gamepad"></i> Playing: <span id="gameName">...</span></div>
         </div>
 
+        <!-- LIVE EMBED: appears only while live, loads the player only when clicked -->
+        <div class="embed-card" id="embedCard">
+            <button class="embed-toggle" id="embedToggle" type="button">
+                <span class="live-dot"></span> <span class="embed-label">WATCH LIVE RIGHT HERE</span>
+            </button>
+            <div class="embed-frame" id="embedFrame" hidden></div>
+        </div>
+
         <h1 class="profile-title">FalconElite</h1>
         <p class="profile-subtext">Welcome to The Nest</p>
 
@@ -499,14 +507,6 @@
             <a href="https://youtube.com/@FalconElite" class="social-btn" title="YouTube" aria-label="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
             <a href="https://tiktok.com/@falconelite" class="social-btn" title="TikTok" aria-label="TikTok" target="_blank" rel="noopener"><i class="fab fa-tiktok"></i></a>
             <a href="https://twitter.com/TheFalconElite" class="social-btn" title="Twitter/X" aria-label="Twitter / X" target="_blank" rel="noopener"><i class="fa-brands fa-x-twitter"></i></a>
-        </div>
-
-        <!-- LIVE EMBED: appears only while live, loads the player only when clicked -->
-        <div class="embed-card" id="embedCard">
-            <button class="embed-toggle" id="embedToggle" type="button">
-                <span class="live-dot"></span> WATCH LIVE RIGHT HERE
-            </button>
-            <div class="embed-frame" id="embedFrame" hidden></div>
         </div>
 
         <!-- RETRO TERMINAL DISCORD CARD -->
@@ -711,7 +711,8 @@
                 gameInfo.classList.remove('is-live');
             }
 
-            if (!isLive) closeEmbed();
+            if (!isLive) { embedDismissed = false; closeEmbed(); }
+            else if (!embedDismissed) openEmbed();
         }
 
         async function checkTwitchData() {
@@ -736,20 +737,32 @@
         setInterval(checkTwitchData, 90000);
 
         // ---------- CLICK-TO-LOAD LIVE PLAYER ----------
-        function closeEmbed() {
+        // Opens by itself when you go live (muted, since browsers block autoplay with sound).
+        // If a visitor closes it, it stays closed until the next stream.
+        let embedDismissed = false;
+        const embedLabel = () => document.querySelector('#embedToggle .embed-label');
+
+        function openEmbed() {
             const frame = $('embedFrame');
-            frame.hidden = true;
-            frame.innerHTML = '';
-        }
-        $('embedToggle').addEventListener('click', () => {
-            const frame = $('embedFrame');
-            if (!frame.hidden) { closeEmbed(); return; }
+            if (!frame.hidden || !location.hostname) return;
             const iframe = document.createElement('iframe');
-            iframe.src = `https://player.twitch.tv/?channel=${CHANNEL}&parent=${encodeURIComponent(location.hostname)}&muted=true`;
+            iframe.src = `https://player.twitch.tv/?channel=${CHANNEL}&parent=${encodeURIComponent(location.hostname)}&muted=true&autoplay=true`;
+            iframe.allow = 'autoplay; fullscreen';
             iframe.allowFullscreen = true;
             iframe.title = 'FalconElite live on Twitch';
             frame.appendChild(iframe);
             frame.hidden = false;
+            embedLabel().textContent = 'WATCHING LIVE · TAP TO HIDE';
+        }
+        function closeEmbed() {
+            const frame = $('embedFrame');
+            frame.hidden = true;
+            frame.innerHTML = '';
+            embedLabel().textContent = 'WATCH LIVE RIGHT HERE';
+        }
+        $('embedToggle').addEventListener('click', () => {
+            if (!$('embedFrame').hidden) { embedDismissed = true; closeEmbed(); }
+            else { embedDismissed = false; openEmbed(); }
         });
 
         // ---------- PAGE-LOAD INTRO ----------
