@@ -419,6 +419,42 @@
         }
         .intro-skip:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.35); }
 
+        /* TWITCHCON COUNTDOWN PILL (main page) */
+        .event-pill {
+            display: none; margin-top: 16px; align-items: center; justify-content: center; gap: 8px;
+            padding: 8px 16px; border-radius: 30px; background: var(--card-bg);
+            border: 1px solid rgba(145, 70, 255, 0.45); box-shadow: 0 0 14px rgba(145, 70, 255, 0.18);
+            font-size: 0.74rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+        }
+        .event-pill.is-on { display: inline-flex; }
+        .event-pill i { color: #9146ff; animation: planeBob 3s ease-in-out infinite; }
+        @keyframes planeBob { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2px, -2px); } }
+
+        /* TEXAS -> TWITCHCON FLIGHT SCENE (intro) */
+        .flight-svg { width: min(92vw, 440px); height: auto; overflow: visible; }
+        .route-base { fill: none; stroke: rgba(255,255,255,0.3); stroke-width: 1.5; stroke-dasharray: 1 7; stroke-linecap: round; }
+        .route-trail { fill: none; stroke: #ffffff; stroke-width: 1.8; stroke-linecap: round; filter: drop-shadow(0 0 4px rgba(255,255,255,0.8)); }
+        .pin-dot { fill: #ffffff; }
+        .pin-ring { fill: none; stroke: rgba(255,255,255,0.35); stroke-width: 1; transform-box: fill-box; transform-origin: center; }
+        .pin-dest .pin-dot { fill: #9146ff; filter: drop-shadow(0 0 6px rgba(145,70,255,0.9)); }
+        .pin-dest .pin-ring { stroke: rgba(145,70,255,0.7); }
+        .pin-label { fill: var(--text-secondary); font: 600 11px 'Inter', sans-serif; letter-spacing: 3px; text-anchor: middle; }
+        .flight-svg.arrived .pin-dest .pin-ring { animation: pinPulse 1.1s ease-out 1; }
+        @keyframes pinPulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3.2); opacity: 0; } }
+        .plane { fill: #ffffff; opacity: 0; transition: opacity 0.35s ease; filter: drop-shadow(0 0 5px rgba(255,255,255,0.85)); }
+        .flight-count {
+            font-size: clamp(2.6rem, 11vw, 4.4rem); font-weight: 800; line-height: 1; margin-top: 10px;
+            color: #ffffff; text-shadow: 0 0 25px rgba(255,255,255,0.6);
+            opacity: 0; transform: translateY(8px); transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .flight-sub {
+            font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; color: var(--text-secondary);
+            opacity: 0; transition: opacity 0.5s ease 0.15s;
+        }
+        #introFlight.landed .flight-count { opacity: 1; transform: none; }
+        #introFlight.landed .flight-sub { opacity: 1; }
+        .intro-flash.purple { background: radial-gradient(circle at 70% 55%, rgba(145,70,255,0.45) 0%, transparent 65%); }
+
         /* SMALL SCREENS */
         @media (max-width: 480px) {
             body { padding-bottom: 110px; }
@@ -448,7 +484,28 @@
         <div class="intro-stage" id="introWelcome">
             <div class="intro-welcome">Welcome to the Nest</div>
         </div>
+        <div class="intro-stage" id="introFlight">
+            <svg class="flight-svg" viewBox="0 0 400 190" role="img" aria-label="A plane flying from Texas to TwitchCon 2026">
+                <path id="routePath" class="route-base" d="M 50 135 Q 200 -10 350 135"/>
+                <path id="routeTrail" class="route-trail" d="M 50 135 Q 200 -10 350 135"/>
+                <g class="pin pin-origin">
+                    <circle class="pin-ring" cx="50" cy="135" r="9"/>
+                    <circle class="pin-dot" cx="50" cy="135" r="4"/>
+                    <text class="pin-label" x="50" y="165">TEXAS</text>
+                </g>
+                <g class="pin pin-dest">
+                    <circle class="pin-ring" cx="350" cy="135" r="9"/>
+                    <circle class="pin-dot" cx="350" cy="135" r="4"/>
+                    <text class="pin-label" x="350" y="165">TWITCHCON</text>
+                    <text class="pin-label" x="350" y="181">2026</text>
+                </g>
+                <g id="plane" class="plane"><path d="M 15 0 L 4 -2.5 L -2 -13 L -6.5 -13 L -3 -2.5 L -10 -2.5 L -13 -6.5 L -16.5 -6.5 L -14 0 L -16.5 6.5 L -13 6.5 L -10 2.5 L -3 2.5 L -6.5 13 L -2 13 L 4 2.5 Z"/></g>
+            </svg>
+            <div class="flight-count" id="flightCount"></div>
+            <div class="flight-sub" id="flightSub"></div>
+        </div>
         <div class="intro-flash" id="introFlash"></div>
+        <div class="intro-flash purple" id="introFlash2"></div>
         <button class="intro-skip" id="introSkip" type="button">Skip ›</button>
     </div>
 
@@ -500,6 +557,9 @@
             <div class="milestone-track"><div class="milestone-bar" id="milestoneBar"></div></div>
             <div class="milestone-text" id="milestoneText"></div>
         </div>
+
+        <!-- TWITCHCON COUNTDOWN (shows itself only around the event) -->
+        <div class="event-pill" id="eventPill"><i class="fa-solid fa-plane"></i> <span id="eventPillText"></span></div>
 
         <!-- SOCIAL GRID -->
         <div class="social-grid">
@@ -585,6 +645,32 @@
             const today = Date.UTC(d.year, d.month - 1, d.day);
             return Math.floor((today - STREAK_DAY_ONE) / 86400000) + 1 + MANUAL_OFFSET;
         }
+
+        // ---------- TWITCHCON 2026 ----------
+        // Self-expiring: the intro scene and the pill appear until the day after EVENT_LAST_DAY, then vanish.
+        // Dates are counted in Mountain time. Change these two lines if the event dates change.
+        const EVENT_START = Date.UTC(2026, 10, 13);     // Nov 13, 2026
+        const EVENT_LAST_DAY = Date.UTC(2026, 10, 15);  // last day to keep showing it (Nov 15)
+
+        function getEventState() {
+            const d = getMountainDate();
+            const today = Date.UTC(d.year, d.month - 1, d.day);
+            if (today > EVENT_LAST_DAY) return null;
+            return { days: Math.round((EVENT_START - today) / 86400000) };
+        }
+        function eventLabels(days) {
+            if (days >= 2) return { big: `${days} DAYS`, sub: 'Until TwitchCon · Nov 13', pill: `TwitchCon 2026 · ${days} days` };
+            if (days === 1) return { big: 'TOMORROW', sub: 'TwitchCon 2026 · Nov 13', pill: 'TwitchCon · Tomorrow' };
+            if (days === 0) return { big: 'TODAY', sub: 'TwitchCon 2026 · Nov 13', pill: 'TwitchCon · Today' };
+            return { big: "WE'RE HERE", sub: 'Live from TwitchCon 2026', pill: 'Live from TwitchCon' };
+        }
+        function updateEventPill() {
+            const ev = getEventState();
+            $('eventPill').classList.toggle('is-on', !!ev);
+            if (ev) $('eventPillText').textContent = eventLabels(ev.days).pill;
+        }
+        updateEventPill();
+        setInterval(updateEventPill, 60000);
 
         let streakAnimated = false;
         function renderStreak() {
@@ -778,9 +864,14 @@
             const dateEl = $('introDate');
             const countStage = $('introCount');
             const welcomeStage = $('introWelcome');
-            const COUNT_MS = 2000;
+            const ev = getEventState();            // null once the TwitchCon window has passed
+            const eventOn = !!ev;
+            const COUNT_MS = eventOn ? 1600 : 2000; // a bit quicker when the flight scene follows
+            const flightStage = $('introFlight');
+            const FLY_MS = 1600;
             const timers = [];
             let raf = 0;
+            let flyRaf = 0;
             let finished = false;
 
             const dateFor = (n) => new Date(STREAK_DAY_ONE + (n - 1) * 86400000)
@@ -791,6 +882,7 @@
                 if (finished) return;
                 finished = true;
                 cancelAnimationFrame(raf);
+                cancelAnimationFrame(flyRaf);
                 timers.forEach(clearTimeout);
                 intro.classList.add('is-done');
                 setTimeout(() => intro.remove(), 800);
@@ -820,14 +912,65 @@
             }, COUNT_MS + 50));
 
             // 3) single soft flash, swap to the welcome message
+            const tFlash = COUNT_MS + 900;
             timers.push(setTimeout(() => {
                 $('introFlash').classList.add('go');
                 countStage.classList.remove('is-on');
-            }, 2900));
-            timers.push(setTimeout(() => welcomeStage.classList.add('is-on'), 3000));
+            }, tFlash));
+            timers.push(setTimeout(() => welcomeStage.classList.add('is-on'), tFlash + 100));
 
-            // 4) fade into the page
-            timers.push(setTimeout(finish, 4500));
+            if (!eventOn) {
+                // 4) fade into the page
+                timers.push(setTimeout(finish, COUNT_MS + 2500));
+                return;
+            }
+
+            // 4) Texas -> TwitchCon flight, then fade into the page
+            const tOff = tFlash + 1100;
+            timers.push(setTimeout(() => welcomeStage.classList.remove('is-on'), tOff));
+            timers.push(setTimeout(startFlight, tOff + 100));
+            timers.push(setTimeout(finish, tOff + 100 + 400 + FLY_MS + 1500));
+
+            function startFlight() {
+                const labels = eventLabels(ev.days);
+                $('flightCount').textContent = labels.big;
+                $('flightSub').textContent = labels.sub;
+                flightStage.classList.add('is-on');
+
+                const path = $('routePath');
+                const trail = $('routeTrail');
+                const plane = $('plane');
+                const svg = flightStage.querySelector('svg');
+                const len = path.getTotalLength();
+                trail.style.strokeDasharray = `0 ${len}`;
+
+                timers.push(setTimeout(() => {
+                    plane.style.opacity = 1;
+                    const t0 = performance.now();
+                    const step = (now) => {
+                        const p = Math.min((now - t0) / FLY_MS, 1);
+                        const e = -(Math.cos(Math.PI * p) - 1) / 2;      // ease in-out
+                        const at = e * len;
+                        const a = path.getPointAtLength(at);
+                        const b = path.getPointAtLength(Math.min(len, at + 1));
+                        const c = path.getPointAtLength(Math.max(0, at - 1));
+                        const angle = Math.atan2(b.y - c.y, b.x - c.x) * 180 / Math.PI;
+                        const scale = 1 + 0.45 * Math.sin(Math.PI * e);   // "climbs" mid-flight
+                        plane.setAttribute('transform', `translate(${a.x} ${a.y}) rotate(${angle}) scale(${scale})`);
+                        trail.style.strokeDasharray = `${at} ${len}`;
+                        if (p < 1) flyRaf = requestAnimationFrame(step);
+                        else land();
+                    };
+                    flyRaf = requestAnimationFrame(step);
+                }, 400));
+
+                function land() {
+                    plane.style.opacity = 0;
+                    svg.classList.add('arrived');
+                    $('introFlash2').classList.add('go');
+                    flightStage.classList.add('landed');
+                }
+            }
         })();
 
         // ---------- TERMINAL TYPING ANIMATION ----------
