@@ -196,11 +196,11 @@
         @keyframes rotateLight { to { --angle: 360deg; } }
 
         /* STREAK DETAILS + MILESTONE */
-        .streak-since { margin-top: 10px; font-size: 0.72rem; color: var(--text-secondary); letter-spacing: 1px; text-transform: uppercase; }
-        .milestone { width: 100%; max-width: 320px; margin-top: 10px; }
+        .milestone { width: 100%; max-width: 320px; margin-top: 14px; }
         .milestone-track { height: 6px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; border: 1px solid var(--card-border); }
         .milestone-bar { height: 100%; width: 0%; background: linear-gradient(90deg, rgba(255,255,255,0.35), #ffffff); border-radius: 6px; box-shadow: 0 0 10px rgba(255,255,255,0.5); transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .milestone-text { margin-top: 6px; font-size: 0.72rem; color: var(--text-secondary); letter-spacing: 0.5px; }
+        .milestone-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-top: 7px; font-size: 0.68rem; color: var(--text-secondary); letter-spacing: 0.6px; text-transform: uppercase; white-space: nowrap; }
+        .milestone-meta #milestoneText { color: var(--text-primary); }
 
         /* SOCIAL GRID */
         .social-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 30px; width: 100%; max-width: 320px; }
@@ -419,23 +419,12 @@
         }
         .intro-skip:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.35); }
 
-        /* TWITCHCON COUNTDOWN PILL (main page) */
-        .event-pill {
-            display: none; margin-top: 16px; align-items: center; justify-content: center; gap: 8px;
-            padding: 8px 16px; border-radius: 30px; background: var(--card-bg);
-            border: 1px solid rgba(145, 70, 255, 0.45); box-shadow: 0 0 14px rgba(145, 70, 255, 0.18);
-            font-size: 0.74rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-        }
-        .event-pill.is-on { display: inline-flex; }
-        .event-pill i { color: #9146ff; animation: planeBob 3s ease-in-out infinite; }
-        @keyframes planeBob { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2px, -2px); } }
-
         /* TWITCHCON TAG FLOATING OVER THE LOGO (main page) */
         .avatar-wrap { position: relative; display: inline-block; }
         /* Chat-bubble style: solid Twitch purple, tail pointing at the logo, floats off the top-right corner */
         .event-badge {
             position: absolute; top: -6px; left: calc(100% - 40px); z-index: 2; pointer-events: none;
-            display: none; flex-direction: column; align-items: flex-start; gap: 1px; max-width: 132px;
+            display: none; flex-direction: column; align-items: flex-start; gap: 1px; max-width: 150px;
             padding: 8px 13px 9px; border-radius: 16px 16px 16px 4px; text-align: left;
             background: linear-gradient(160deg, #a970ff 0%, #7d3cff 100%); color: #ffffff;
             box-shadow: 0 6px 22px rgba(145, 70, 255, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
@@ -449,6 +438,7 @@
         .bubble-kicker { font-size: 0.6rem; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; opacity: 0.85; }
         .bubble-main { font-size: 0.82rem; font-weight: 800; line-height: 1.2; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
         .bubble-main i { font-size: 0.78rem; }
+        .bubble-when { margin-top: 5px; padding: 2px 8px; border-radius: 10px; background: rgba(0, 0, 0, 0.25); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; white-space: nowrap; }
         @keyframes bubbleFloat {
             0%, 100% { transform: translateY(0) rotate(1.5deg); }
             50% { transform: translateY(-6px) rotate(-1deg); }
@@ -497,7 +487,7 @@
             body { padding-bottom: 110px; }
             .profile-title { font-size: 2.3rem; }
             .avatar-img { width: 150px; height: 150px; }
-            .event-badge { left: calc(100% - 34px); top: -8px; padding: 7px 11px 8px; }
+            .event-badge { left: calc(100% - 44px); top: -8px; padding: 7px 11px 8px; }
             .bubble-main { font-size: 0.76rem; }
             .system-footer { gap: 6px 16px; font-size: 0.68rem; }
         }
@@ -559,7 +549,7 @@
                 <img src="FalconLogo.png" alt="FalconElite logo" class="avatar-img" width="180" height="180">
             </a>
             <!-- TWITCHCON TAG: "Going to" before the event, "At" during, gone the Monday after -->
-            <div class="event-badge" id="eventBadge"><span class="bubble-kicker" id="eventBadgeKicker"></span><span class="bubble-main"><span>TwitchCon 2026</span><i id="eventBadgeIcon" class="fa-solid fa-plane"></i></span></div>
+            <div class="event-badge" id="eventBadge"><span class="bubble-kicker" id="eventBadgeKicker"></span><span class="bubble-main"><span>TwitchCon 2026</span><i id="eventBadgeIcon" class="fa-solid fa-plane"></i></span><span class="bubble-when" id="eventBadgeWhen"></span></div>
         </div>
 
         <div class="status-wrapper">
@@ -595,16 +585,12 @@
             <i class="fa-solid fa-fire" style="color: #ffffff;"></i>
             <span><span id="streakDays">---</span> Day Stream Streak</span>
         </div>
-        <div class="streak-since" id="streakSince"></div>
 
         <!-- NEXT MILESTONE -->
         <div class="milestone" aria-label="Progress to next streak milestone">
             <div class="milestone-track"><div class="milestone-bar" id="milestoneBar"></div></div>
-            <div class="milestone-text" id="milestoneText"></div>
+            <div class="milestone-meta"><span id="streakSince"></span><span id="milestoneText"></span></div>
         </div>
-
-        <!-- TWITCHCON COUNTDOWN (shows itself only around the event) -->
-        <div class="event-pill" id="eventPill"><i class="fa-solid fa-plane"></i> <span id="eventPillText"></span></div>
 
         <!-- SOCIAL GRID -->
         <div class="social-grid">
@@ -692,7 +678,7 @@
         }
 
         // ---------- TWITCHCON 2026 ----------
-        // Self-expiring: the intro scene and the pill appear until the day after EVENT_LAST_DAY, then vanish.
+        // Self-expiring: the intro scene and the logo bubble appear until the day after EVENT_LAST_DAY, then vanish.
         // Dates are counted in Mountain time. Change these two lines if the event dates change.
         const EVENT_START = Date.UTC(2026, 10, 13);     // Nov 13, 2026
         const EVENT_LAST_DAY = Date.UTC(2026, 10, 15);  // last day to keep showing it (Nov 15)
@@ -704,24 +690,24 @@
             return { days: Math.round((EVENT_START - today) / 86400000) };
         }
         function eventLabels(days) {
-            if (days >= 2) return { big: `${days} DAYS`, sub: 'Until TwitchCon · Nov 13', pill: `TwitchCon 2026 · ${days} days` };
-            if (days === 1) return { big: 'TOMORROW', sub: 'TwitchCon 2026 · Nov 13', pill: 'TwitchCon · Tomorrow' };
-            if (days === 0) return { big: 'TODAY', sub: 'TwitchCon 2026 · Nov 13', pill: 'TwitchCon · Today' };
-            return { big: "WE'RE HERE", sub: 'Live from TwitchCon 2026', pill: 'Live from TwitchCon' };
+            if (days >= 2) return { big: `${days} DAYS`, sub: 'Until TwitchCon · Nov 13' };
+            if (days === 1) return { big: 'TOMORROW', sub: 'TwitchCon 2026 · Nov 13' };
+            if (days === 0) return { big: 'TODAY', sub: 'TwitchCon 2026 · Nov 13' };
+            return { big: "WE'RE HERE", sub: 'Live from TwitchCon 2026' };
         }
-        function updateEventPill() {
+        function updateEventBadge() {
             const ev = getEventState();
-            $('eventPill').classList.toggle('is-on', !!ev);
             $('eventBadge').classList.toggle('is-on', !!ev);
             if (!ev) return;
-            $('eventPillText').textContent = eventLabels(ev.days).pill;
             // Tag over the logo: "Going to" until the day before, "At" from the first day of the event
             const during = ev.days <= 0;
             $('eventBadgeKicker').textContent = during ? 'Currently at' : 'Going to';
             $('eventBadgeIcon').className = during ? 'fa-solid fa-location-dot' : 'fa-solid fa-plane';
+            const dateStr = new Date(EVENT_START).toLocaleDateString('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric' });
+            $('eventBadgeWhen').textContent = during ? 'Happening now' : (ev.days === 1 ? 'Tomorrow' : `${dateStr} · ${ev.days} days`);
         }
-        updateEventPill();
-        setInterval(updateEventPill, 60000);
+        updateEventBadge();
+        setInterval(updateEventBadge, 60000);
 
         let streakAnimated = false;
         function renderStreak() {
@@ -749,7 +735,7 @@
             const totalMonths = (d.year - 2019) * 12 + (d.month - 1);
             const yrs = Math.floor(totalMonths / 12);
             const mos = totalMonths % 12;
-            $('streakSince').textContent = `Since Jan 1, 2019 · ${yrs} yrs ${mos} mos`;
+            $('streakSince').textContent = `Since 2019 · ${yrs}y ${mos}m`;
 
             // Next milestone
             const prev = Math.floor(count / MILESTONE_STEP) * MILESTONE_STEP;
