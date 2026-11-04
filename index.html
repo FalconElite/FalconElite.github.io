@@ -432,19 +432,26 @@
 
         /* TWITCHCON TAG FLOATING OVER THE LOGO (main page) */
         .avatar-wrap { position: relative; display: inline-block; }
+        /* Chat-bubble style: solid Twitch purple, tail pointing at the logo, floats off the top-right corner */
         .event-badge {
-            position: absolute; left: 50%; bottom: 4px; z-index: 2; pointer-events: none; white-space: nowrap;
-            display: none; align-items: center; gap: 7px; padding: 6px 13px; border-radius: 20px;
-            background: rgba(18, 12, 32, 0.92); border: 1px solid rgba(145, 70, 255, 0.7);
-            box-shadow: 0 0 16px rgba(145, 70, 255, 0.45);
-            font-size: 0.66rem; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase;
-            transform: translateX(-50%); animation: badgeFloat 3.6s ease-in-out infinite;
+            position: absolute; top: -6px; left: calc(100% - 40px); z-index: 2; pointer-events: none;
+            display: none; flex-direction: column; align-items: flex-start; gap: 1px; max-width: 132px;
+            padding: 8px 13px 9px; border-radius: 16px 16px 16px 4px; text-align: left;
+            background: linear-gradient(160deg, #a970ff 0%, #7d3cff 100%); color: #ffffff;
+            box-shadow: 0 6px 22px rgba(145, 70, 255, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+            animation: bubbleFloat 3.4s ease-in-out infinite;
         }
-        .event-badge.is-on { display: inline-flex; }
-        .event-badge i { color: #b794ff; }
-        @keyframes badgeFloat {
-            0%, 100% { transform: translate(-50%, 0); box-shadow: 0 0 14px rgba(145, 70, 255, 0.35); }
-            50% { transform: translate(-50%, -5px); box-shadow: 0 0 22px rgba(145, 70, 255, 0.65); }
+        .event-badge.is-on { display: flex; }
+        .event-badge::after {   /* tail, pointing back toward the logo */
+            content: ''; position: absolute; left: -3px; bottom: -7px; width: 14px; height: 14px; z-index: -1;
+            background: #7d3cff; border-radius: 0 0 0 5px; transform: rotate(35deg) skewX(-18deg);
+        }
+        .bubble-kicker { font-size: 0.6rem; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; opacity: 0.85; }
+        .bubble-main { font-size: 0.82rem; font-weight: 800; line-height: 1.2; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .bubble-main i { font-size: 0.78rem; }
+        @keyframes bubbleFloat {
+            0%, 100% { transform: translateY(0) rotate(1.5deg); }
+            50% { transform: translateY(-6px) rotate(-1deg); }
         }
 
         /* EL PASO -> SAN DIEGO FLIGHT SCENE (intro) */
@@ -490,7 +497,8 @@
             body { padding-bottom: 110px; }
             .profile-title { font-size: 2.3rem; }
             .avatar-img { width: 150px; height: 150px; }
-            .event-badge { font-size: 0.6rem; padding: 5px 11px; letter-spacing: 1.3px; }
+            .event-badge { left: calc(100% - 34px); top: -8px; padding: 7px 11px 8px; }
+            .bubble-main { font-size: 0.76rem; }
             .system-footer { gap: 6px 16px; font-size: 0.68rem; }
         }
 
@@ -551,7 +559,7 @@
                 <img src="FalconLogo.png" alt="FalconElite logo" class="avatar-img" width="180" height="180">
             </a>
             <!-- TWITCHCON TAG: "Going to" before the event, "At" during, gone the Monday after -->
-            <div class="event-badge" id="eventBadge"><i id="eventBadgeIcon" class="fa-solid fa-plane"></i><span id="eventBadgeText"></span></div>
+            <div class="event-badge" id="eventBadge"><span class="bubble-kicker" id="eventBadgeKicker"></span><span class="bubble-main"><span>TwitchCon 2026</span><i id="eventBadgeIcon" class="fa-solid fa-plane"></i></span></div>
         </div>
 
         <div class="status-wrapper">
@@ -709,7 +717,7 @@
             $('eventPillText').textContent = eventLabels(ev.days).pill;
             // Tag over the logo: "Going to" until the day before, "At" from the first day of the event
             const during = ev.days <= 0;
-            $('eventBadgeText').textContent = during ? 'At TwitchCon 2026' : 'Going to TwitchCon 2026';
+            $('eventBadgeKicker').textContent = during ? 'Currently at' : 'Going to';
             $('eventBadgeIcon').className = during ? 'fa-solid fa-location-dot' : 'fa-solid fa-plane';
         }
         updateEventPill();
