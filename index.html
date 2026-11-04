@@ -430,6 +430,23 @@
         .event-pill i { color: #9146ff; animation: planeBob 3s ease-in-out infinite; }
         @keyframes planeBob { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(2px, -2px); } }
 
+        /* TWITCHCON TAG FLOATING OVER THE LOGO (main page) */
+        .avatar-wrap { position: relative; display: inline-block; }
+        .event-badge {
+            position: absolute; left: 50%; bottom: 4px; z-index: 2; pointer-events: none; white-space: nowrap;
+            display: none; align-items: center; gap: 7px; padding: 6px 13px; border-radius: 20px;
+            background: rgba(18, 12, 32, 0.92); border: 1px solid rgba(145, 70, 255, 0.7);
+            box-shadow: 0 0 16px rgba(145, 70, 255, 0.45);
+            font-size: 0.66rem; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase;
+            transform: translateX(-50%); animation: badgeFloat 3.6s ease-in-out infinite;
+        }
+        .event-badge.is-on { display: inline-flex; }
+        .event-badge i { color: #b794ff; }
+        @keyframes badgeFloat {
+            0%, 100% { transform: translate(-50%, 0); box-shadow: 0 0 14px rgba(145, 70, 255, 0.35); }
+            50% { transform: translate(-50%, -5px); box-shadow: 0 0 22px rgba(145, 70, 255, 0.65); }
+        }
+
         /* EL PASO -> SAN DIEGO FLIGHT SCENE (intro) */
         .flight-svg {
             display: block; width: min(92vw, 520px); height: auto; overflow: hidden;
@@ -473,6 +490,7 @@
             body { padding-bottom: 110px; }
             .profile-title { font-size: 2.3rem; }
             .avatar-img { width: 150px; height: 150px; }
+            .event-badge { font-size: 0.6rem; padding: 5px 11px; letter-spacing: 1.3px; }
             .system-footer { gap: 6px 16px; font-size: 0.68rem; }
         }
 
@@ -528,9 +546,13 @@
 
     <main class="container">
         <!-- AVATAR LINK -->
-        <a href="https://twitch.tv/FalconElite" id="avatarLink" class="avatar-link" target="_blank" rel="noopener" aria-label="Watch FalconElite live on Twitch">
-            <img src="FalconLogo.png" alt="FalconElite logo" class="avatar-img" width="180" height="180">
-        </a>
+        <div class="avatar-wrap">
+            <a href="https://twitch.tv/FalconElite" id="avatarLink" class="avatar-link" target="_blank" rel="noopener" aria-label="Watch FalconElite live on Twitch">
+                <img src="FalconLogo.png" alt="FalconElite logo" class="avatar-img" width="180" height="180">
+            </a>
+            <!-- TWITCHCON TAG: "Going to" before the event, "At" during, gone the Monday after -->
+            <div class="event-badge" id="eventBadge"><i id="eventBadgeIcon" class="fa-solid fa-plane"></i><span id="eventBadgeText"></span></div>
+        </div>
 
         <div class="status-wrapper">
             <div id="liveBadge" class="live-badge"><span class="live-dot"></span> LIVE</div>
@@ -682,7 +704,13 @@
         function updateEventPill() {
             const ev = getEventState();
             $('eventPill').classList.toggle('is-on', !!ev);
-            if (ev) $('eventPillText').textContent = eventLabels(ev.days).pill;
+            $('eventBadge').classList.toggle('is-on', !!ev);
+            if (!ev) return;
+            $('eventPillText').textContent = eventLabels(ev.days).pill;
+            // Tag over the logo: "Going to" until the day before, "At" from the first day of the event
+            const during = ev.days <= 0;
+            $('eventBadgeText').textContent = during ? 'At TwitchCon 2026' : 'Going to TwitchCon 2026';
+            $('eventBadgeIcon').className = during ? 'fa-solid fa-location-dot' : 'fa-solid fa-plane';
         }
         updateEventPill();
         setInterval(updateEventPill, 60000);
