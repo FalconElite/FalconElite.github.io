@@ -57,47 +57,81 @@
             outline: 2px solid #ffffff; outline-offset: 3px;
         }
 
-        /* ATMOSPHERIC BACKGROUND */
-        body::before {
-            content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
-            z-index: -4; animation: stormAtmosphere 12s infinite ease-in-out;
+        /* NEON GRID BACKGROUND (Tron / cyberpunk) */
+        :root { --grid: 255, 255, 255; --horizon: 56%; --cell: 64px; }
+        body.site-tc { --grid: 170, 120, 255; }     /* TwitchCon week: purple tint */
+        body.site-live { --grid: 255, 70, 60; }     /* while live: red tint (wins over TwitchCon) */
+
+        .grid-stage { position: fixed; inset: 0; z-index: -3; overflow: hidden; pointer-events: none; }
+        .grid-glow {
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 70% 38% at 50% var(--horizon), rgba(var(--grid), 0.09) 0%, transparent 70%),
+                radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.035) 0%, transparent 60%);
+        }
+        .grid-horizon {
+            position: absolute; left: 0; right: 0; top: var(--horizon); height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(var(--grid), 0.4) 25%, rgba(var(--grid), 0.4) 75%, transparent 100%);
+            box-shadow: 0 0 16px 1px rgba(var(--grid), 0.16);
+        }
+        .grid-floor {
+            position: absolute; left: 0; right: 0; top: var(--horizon); bottom: 0; overflow: hidden;
+            perspective: 360px; perspective-origin: 50% 0%;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, rgba(0,0,0,0.85) 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, rgba(0,0,0,0.85) 100%);
+        }
+        .grid-plane {
+            position: absolute; left: 50%; top: 0; width: 4096px; height: 380px; margin-left: -2048px;
+            transform-origin: 50% 0; transform: rotateX(72deg);
+        }
+        .grid-lines {
+            position: absolute; left: 0; right: 0; top: calc(var(--cell) * -1); height: calc(100% + var(--cell));
+            background-image:
+                linear-gradient(rgba(var(--grid), 0.24) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(var(--grid), 0.24) 1px, transparent 1px),
+                linear-gradient(rgba(var(--grid), 0.045) 4px, transparent 4px),
+                linear-gradient(90deg, rgba(var(--grid), 0.045) 4px, transparent 4px);
+            background-size: var(--cell) var(--cell);
+            animation: gridScroll 4s linear infinite;
+        }
+        @keyframes gridScroll { to { transform: translateY(var(--cell)); } }
+
+        .grid-calm {
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse min(400px, 62vw) 75% at 50% 62%, rgba(5, 5, 7, 0.88) 0%, rgba(5, 5, 7, 0.55) 55%, rgba(5, 5, 7, 0) 100%);
         }
 
-        body::after {
-            content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            filter: blur(40px); opacity: 0; z-index: -2;
-            animation: lightningFlash 18s infinite;
+        /* Light-cycle pulses: white, then purple, then red, each racing down a grid line toward the horizon */
+        .pulse {
+            position: absolute; top: 310px; width: 3px; height: 130px; margin-left: -1px; opacity: 0;
+            animation: pulseRun 24s linear infinite;
+        }
+        .pulse.p-white  { left: calc(50% - 256px); background: linear-gradient(to bottom, #ffffff, transparent); box-shadow: 0 0 14px 2px rgba(255,255,255,0.5); }
+        .pulse.p-purple { left: calc(50% + 256px); background: linear-gradient(to bottom, #9146ff, transparent); box-shadow: 0 0 14px 2px rgba(145,70,255,0.6); animation-delay: 8s; }
+        .pulse.p-red    { left: calc(50% - 64px);  background: linear-gradient(to bottom, #ff3b30, transparent); box-shadow: 0 0 14px 2px rgba(255,59,48,0.6); animation-delay: 16s; }
+        @keyframes pulseRun {
+            0%   { top: 310px; opacity: 0; }
+            0.8% { opacity: 0.9; }
+            6%   { top: 10px; opacity: 0.9; }
+            7%   { top: -50px; opacity: 0; }
+            100% { top: -50px; opacity: 0; }
         }
 
-        .fog-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -3; overflow: hidden; pointer-events: none; }
-        .fog-layer { position: absolute; width: 200%; height: 140%; filter: blur(60px); opacity: 0.6; }
-        .fog-1 { top: -20%; background: radial-gradient(ellipse, rgba(255,255,255,0.06) 0%, transparent 70%); animation: rollFogRight 28s linear infinite alternate; }
-
-        @keyframes stormAtmosphere { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
-        @keyframes rollFogRight { 0% { transform: translateX(0); } 100% { transform: translateX(30%); } }
-
-        /* BRANDED LIGHTNING FLASHES */
-        @keyframes lightningFlash {
-            0%, 20%, 40%, 60%, 80%, 100% { opacity: 0; }
-
-            12% { background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.25) 0%, transparent 70%); opacity: 0.7; }
-            13% { opacity: 0; }
-            14% { background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.35) 0%, transparent 70%); opacity: 0.9; }
-
-            34% { background: radial-gradient(circle at 80% 20%, rgba(145, 70, 255, 0.3) 0%, transparent 70%); opacity: 0.8; }
-            35% { opacity: 0; }
-            36% { background: radial-gradient(circle at 80% 20%, rgba(145, 70, 255, 0.45) 0%, transparent 70%); opacity: 1; }
-
-            52% { background: radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.25) 0%, transparent 70%); opacity: 0.7; }
-            53% { opacity: 0; }
-            54% { background: radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.35) 0%, transparent 70%); opacity: 0.9; }
-
-            76% { background: radial-gradient(circle at 20% 70%, rgba(255, 0, 0, 0.25) 0%, transparent 70%); opacity: 0.7; }
-            77% { opacity: 0; }
-            78% { background: radial-gradient(circle at 20% 70%, rgba(255, 0, 0, 0.4) 0%, transparent 70%); opacity: 0.95; }
-
-            92% { background: radial-gradient(circle at 85% 80%, rgba(255, 255, 255, 0.2) 0%, transparent 70%); opacity: 0.6; }
+        /* Horizon flare as each pulse arrives */
+        .grid-flare {
+            position: absolute; left: 0; right: 0; top: calc(var(--horizon) - 150px); height: 300px; opacity: 0;
+            animation: flareBurst 24s linear infinite;
+        }
+        .grid-flare.f-white  { background: radial-gradient(ellipse 55% 50% at 50% 50%, rgba(255,255,255,0.20), transparent 70%); }
+        .grid-flare.f-purple { background: radial-gradient(ellipse 55% 50% at 50% 50%, rgba(145,70,255,0.26), transparent 70%); animation-delay: 8s; }
+        .grid-flare.f-red    { background: radial-gradient(ellipse 55% 50% at 50% 50%, rgba(255,59,48,0.24), transparent 70%); animation-delay: 16s; }
+        @keyframes flareBurst {
+            0%, 6.4% { opacity: 0; }
+            6.8% { opacity: 1; }
+            7.6% { opacity: 0.3; }
+            8.4% { opacity: 0.8; }
+            11.5% { opacity: 0; }
+            100% { opacity: 0; }
         }
 
         @keyframes nameFlicker {
@@ -540,7 +574,19 @@
         <button class="intro-skip" id="introSkip" type="button">Skip ›</button>
     </div>
 
-    <div class="fog-container"><div class="fog-layer fog-1"></div></div>
+    <!-- NEON GRID BACKGROUND -->
+    <div class="grid-stage" aria-hidden="true">
+        <div class="grid-glow"></div>
+        <div class="grid-floor">
+            <div class="grid-plane">
+                <div class="grid-lines"></div>
+                <span class="pulse p-white"></span><span class="pulse p-purple"></span><span class="pulse p-red"></span>
+            </div>
+        </div>
+        <div class="grid-horizon"></div>
+        <div class="grid-calm"></div>
+        <div class="grid-flare f-white"></div><div class="grid-flare f-purple"></div><div class="grid-flare f-red"></div>
+    </div>
 
     <main class="container">
         <!-- AVATAR LINK -->
@@ -698,6 +744,7 @@
         function updateEventBadge() {
             const ev = getEventState();
             $('eventBadge').classList.toggle('is-on', !!ev);
+            document.body.classList.toggle('site-tc', !!ev && ev.days <= 7);   // purple tint the week of TwitchCon
             if (!ev) return;
             // Tag over the logo: "Going to" until the day before, "At" from the first day of the event
             const during = ev.days <= 0;
@@ -823,6 +870,7 @@
             $('avatarLink').classList.toggle('is-live', isLive);
             $('embedCard').classList.toggle('is-live', isLive && !!location.hostname);
             $('streamDot').classList.toggle('is-live', isLive);
+            document.body.classList.toggle('site-live', isLive);
             $('streamStatus').textContent = isLive ? 'LIVE' : 'OFFLINE';
             document.title = isLive ? `🔴 LIVE | ${BASE_TITLE}` : BASE_TITLE;
 
