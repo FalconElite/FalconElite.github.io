@@ -58,7 +58,8 @@
         }
 
         /* NEON GRID BACKGROUND (Tron / cyberpunk) */
-        :root { --grid: 235, 235, 240; --horizon: 56%; --cell: 64px; }
+        :root { --grid: 255, 255, 255; --horizon: 56%; --cell: 64px; }
+        body.site-tc { --grid: 170, 120, 255; }     /* TwitchCon week: purple tint */
         body.site-live { --grid: 255, 70, 60; }     /* while live: red tint (wins over TwitchCon) */
 
         .grid-stage { position: fixed; inset: 0; z-index: -3; overflow: hidden; pointer-events: none; }
@@ -86,10 +87,10 @@
         .grid-lines {
             position: absolute; left: 0; right: 0; top: calc(var(--cell) * -1); height: calc(100% + var(--cell));
             background-image:
-                linear-gradient(rgba(var(--grid), 0.34) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(var(--grid), 0.34) 1px, transparent 1px),
-                linear-gradient(rgba(var(--grid), 0.06) 5px, transparent 5px),
-                linear-gradient(90deg, rgba(var(--grid), 0.06) 5px, transparent 5px);
+                linear-gradient(rgba(var(--grid), 0.46) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(var(--grid), 0.46) 1px, transparent 1px),
+                linear-gradient(rgba(var(--grid), 0.10) 5px, transparent 5px),
+                linear-gradient(90deg, rgba(var(--grid), 0.10) 5px, transparent 5px);
             background-size: var(--cell) var(--cell);
             animation: gridScroll 4s linear infinite;
         }
@@ -752,7 +753,7 @@
         function updateEventBadge() {
             const ev = getEventState();
             $('eventBadge').classList.toggle('is-on', !!ev);
-            document.body.classList.toggle('site-tc', !!ev && ev.days <= 7);
+            document.body.classList.toggle('site-tc', !!ev && ev.days <= 7);   // purple tint the week of TwitchCon
             if (!ev) return;
             // Tag over the logo: "Going to" until the day before, "At" from the first day of the event
             const during = ev.days <= 0;
