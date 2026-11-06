@@ -58,27 +58,26 @@
         }
 
         /* NEON GRID BACKGROUND (Tron / cyberpunk) */
-        :root { --grid: 255, 255, 255; --horizon: 56%; --cell: 64px; }
-        body.site-tc { --grid: 170, 120, 255; }     /* TwitchCon week: purple tint */
+        :root { --grid: 235, 235, 240; --horizon: 56%; --cell: 64px; }
         body.site-live { --grid: 255, 70, 60; }     /* while live: red tint (wins over TwitchCon) */
 
         .grid-stage { position: fixed; inset: 0; z-index: -3; overflow: hidden; pointer-events: none; }
         .grid-glow {
             position: absolute; inset: 0;
             background:
-                radial-gradient(ellipse 70% 38% at 50% var(--horizon), rgba(var(--grid), 0.09) 0%, transparent 70%),
+                radial-gradient(ellipse 75% 40% at 50% var(--horizon), rgba(var(--grid), 0.15) 0%, transparent 70%),
                 radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.035) 0%, transparent 60%);
         }
         .grid-horizon {
             position: absolute; left: 0; right: 0; top: var(--horizon); height: 1px;
-            background: linear-gradient(90deg, transparent 0%, rgba(var(--grid), 0.4) 25%, rgba(var(--grid), 0.4) 75%, transparent 100%);
-            box-shadow: 0 0 16px 1px rgba(var(--grid), 0.16);
+            background: linear-gradient(90deg, transparent 0%, rgba(var(--grid), 0.75) 22%, rgba(var(--grid), 0.75) 78%, transparent 100%);
+            box-shadow: 0 0 22px 2px rgba(var(--grid), 0.32);
         }
         .grid-floor {
             position: absolute; left: 0; right: 0; top: var(--horizon); bottom: 0; overflow: hidden;
             perspective: 360px; perspective-origin: 50% 0%;
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, rgba(0,0,0,0.85) 100%);
-            mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, rgba(0,0,0,0.85) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 24%, #000 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 24%, #000 100%);
         }
         .grid-plane {
             position: absolute; left: 50%; top: 0; width: 4096px; height: 380px; margin-left: -2048px;
@@ -87,10 +86,10 @@
         .grid-lines {
             position: absolute; left: 0; right: 0; top: calc(var(--cell) * -1); height: calc(100% + var(--cell));
             background-image:
-                linear-gradient(rgba(var(--grid), 0.24) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(var(--grid), 0.24) 1px, transparent 1px),
-                linear-gradient(rgba(var(--grid), 0.045) 4px, transparent 4px),
-                linear-gradient(90deg, rgba(var(--grid), 0.045) 4px, transparent 4px);
+                linear-gradient(rgba(var(--grid), 0.34) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(var(--grid), 0.34) 1px, transparent 1px),
+                linear-gradient(rgba(var(--grid), 0.06) 5px, transparent 5px),
+                linear-gradient(90deg, rgba(var(--grid), 0.06) 5px, transparent 5px);
             background-size: var(--cell) var(--cell);
             animation: gridScroll 4s linear infinite;
         }
@@ -98,41 +97,46 @@
 
         .grid-calm {
             position: absolute; inset: 0;
-            background: radial-gradient(ellipse min(400px, 62vw) 75% at 50% 62%, rgba(5, 5, 7, 0.88) 0%, rgba(5, 5, 7, 0.55) 55%, rgba(5, 5, 7, 0) 100%);
+            background: radial-gradient(ellipse min(400px, 62vw) 75% at 50% 62%, rgba(5, 5, 7, 0.55) 0%, rgba(5, 5, 7, 0.28) 55%, rgba(5, 5, 7, 0) 100%);
         }
 
-        /* Light-cycle pulses: white, then purple, then red, each racing down a grid line toward the horizon */
+        /* Light-cycle pulses: white (middle line), purple (right line), red (left line), racing toward the horizon.
+           They live in their own copy of the floor so the calm-center overlay never dims them, and they wait for the intro to finish. */
         .pulse {
-            position: absolute; top: 310px; width: 3px; height: 130px; margin-left: -1px; opacity: 0;
-            animation: pulseRun 24s linear infinite;
+            position: absolute; top: 310px; width: 4px; height: 150px; margin-left: -2px; opacity: 0;
+            animation: pulseRun 15s linear infinite;
         }
-        .pulse.p-white  { left: calc(50% - 256px); background: linear-gradient(to bottom, #ffffff, transparent); box-shadow: 0 0 14px 2px rgba(255,255,255,0.5); }
-        .pulse.p-purple { left: calc(50% + 256px); background: linear-gradient(to bottom, #9146ff, transparent); box-shadow: 0 0 14px 2px rgba(145,70,255,0.6); animation-delay: 8s; }
-        .pulse.p-red    { left: calc(50% - 64px);  background: linear-gradient(to bottom, #ff3b30, transparent); box-shadow: 0 0 14px 2px rgba(255,59,48,0.6); animation-delay: 16s; }
+        .pulse.p-white  { left: 50%;                background: linear-gradient(to bottom, #ffffff, transparent); box-shadow: 0 0 18px 3px rgba(255,255,255,0.65); animation-delay: 0.8s; }
+        .pulse.p-purple { left: calc(50% + 128px);  background: linear-gradient(to bottom, #9146ff, transparent); box-shadow: 0 0 18px 3px rgba(145,70,255,0.8);  animation-delay: 5.8s; }
+        .pulse.p-red    { left: calc(50% - 128px);  background: linear-gradient(to bottom, #ff3b30, transparent); box-shadow: 0 0 18px 3px rgba(255,59,48,0.8);   animation-delay: 10.8s; }
         @keyframes pulseRun {
-            0%   { top: 310px; opacity: 0; }
-            0.8% { opacity: 0.9; }
-            6%   { top: 10px; opacity: 0.9; }
-            7%   { top: -50px; opacity: 0; }
-            100% { top: -50px; opacity: 0; }
+            0%    { top: 310px; opacity: 0; }
+            1.6%  { opacity: 1; }
+            12%   { top: 10px; opacity: 1; }
+            14%   { top: -50px; opacity: 0; }
+            100%  { top: -50px; opacity: 0; }
         }
 
         /* Horizon flare as each pulse arrives */
         .grid-flare {
-            position: absolute; left: 0; right: 0; top: calc(var(--horizon) - 150px); height: 300px; opacity: 0;
-            animation: flareBurst 24s linear infinite;
+            position: absolute; left: 0; right: 0; top: calc(var(--horizon) - 160px); height: 320px; opacity: 0;
+            animation: flareBurst 15s linear infinite;
         }
-        .grid-flare.f-white  { background: radial-gradient(ellipse 55% 50% at 50% 50%, rgba(255,255,255,0.20), transparent 70%); }
-        .grid-flare.f-purple { background: radial-gradient(ellipse 55% 50% at 50% 50%, rgba(145,70,255,0.26), transparent 70%); animation-delay: 8s; }
-        .grid-flare.f-red    { background: radial-gradient(ellipse 55% 50% at 50% 50%, rgba(255,59,48,0.24), transparent 70%); animation-delay: 16s; }
+        .grid-flare.f-white  { background: radial-gradient(ellipse 55% 50% at 50% 50%, rgba(255,255,255,0.28), transparent 70%); animation-delay: 0.8s; }
+        .grid-flare.f-purple { background: radial-gradient(ellipse 55% 50% at 50% 50%, rgba(145,70,255,0.36), transparent 70%); animation-delay: 5.8s; }
+        .grid-flare.f-red    { background: radial-gradient(ellipse 55% 50% at 50% 50%, rgba(255,59,48,0.34), transparent 70%); animation-delay: 10.8s; }
         @keyframes flareBurst {
-            0%, 6.4% { opacity: 0; }
-            6.8% { opacity: 1; }
-            7.6% { opacity: 0.3; }
-            8.4% { opacity: 0.8; }
-            11.5% { opacity: 0; }
+            0%, 12.6% { opacity: 0; }
+            13.4% { opacity: 1; }
+            15.2% { opacity: 0.3; }
+            16.8% { opacity: 0.85; }
+            23% { opacity: 0; }
             100% { opacity: 0; }
         }
+
+        /* Pulses wait for the intro to finish (this must come after the animation shorthands above) */
+        .pulse, .grid-flare { animation-play-state: paused; }
+        body.grid-go .pulse, body.grid-go .grid-flare { animation-play-state: running; }
 
         @keyframes nameFlicker {
             0%, 86%, 94%, 100% { color: #f0f6fc; text-shadow: none; }
@@ -238,7 +242,7 @@
 
         /* SOCIAL GRID */
         .social-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 30px; width: 100%; max-width: 320px; }
-        .social-btn { display: flex; justify-content: center; align-items: center; height: 55px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); border-radius: var(--radius-main); color: var(--text-primary); font-size: 1.4rem; transition: var(--transition); text-decoration: none; }
+        .social-btn { display: flex; justify-content: center; align-items: center; height: 55px; background: rgba(16, 18, 24, 0.8); border: 1px solid var(--card-border); border-radius: var(--radius-main); color: var(--text-primary); font-size: 1.4rem; transition: var(--transition); text-decoration: none; }
         .social-btn:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-4px); }
         .social-btn:hover[title="Twitch"] { box-shadow: 0 0 20px #9146ff; border-color: #9146ff; }
         .social-btn:hover[title="YouTube"] { box-shadow: 0 0 20px #ff0000; border-color: #ff0000; }
@@ -271,7 +275,7 @@
             margin-top: 25px;
             width: 100%;
             max-width: 320px;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(10, 10, 14, 0.78);
             border: 1px solid var(--card-border);
             border-radius: var(--radius-main);
             padding: 16px 20px;
@@ -580,11 +584,15 @@
         <div class="grid-floor">
             <div class="grid-plane">
                 <div class="grid-lines"></div>
-                <span class="pulse p-white"></span><span class="pulse p-purple"></span><span class="pulse p-red"></span>
             </div>
         </div>
         <div class="grid-horizon"></div>
         <div class="grid-calm"></div>
+        <div class="grid-floor">
+            <div class="grid-plane">
+                <span class="pulse p-white"></span><span class="pulse p-purple"></span><span class="pulse p-red"></span>
+            </div>
+        </div>
         <div class="grid-flare f-white"></div><div class="grid-flare f-purple"></div><div class="grid-flare f-red"></div>
     </div>
 
@@ -744,7 +752,7 @@
         function updateEventBadge() {
             const ev = getEventState();
             $('eventBadge').classList.toggle('is-on', !!ev);
-            document.body.classList.toggle('site-tc', !!ev && ev.days <= 7);   // purple tint the week of TwitchCon
+            document.body.classList.toggle('site-tc', !!ev && ev.days <= 7);
             if (!ev) return;
             // Tag over the logo: "Going to" until the day before, "At" from the first day of the event
             const during = ev.days <= 0;
@@ -940,7 +948,7 @@
         // Counts from Day 1 up to today's streak, flashes, shows "Welcome to the Nest", then fades out.
         (function runIntro() {
             const intro = $('intro');
-            if (!intro || document.documentElement.classList.contains('no-intro')) return;
+            if (!intro || document.documentElement.classList.contains('no-intro')) { document.body.classList.add('grid-go'); return; }
 
             try { sessionStorage.setItem('nest_intro_seen', '1'); } catch (e) {}
 
@@ -970,6 +978,7 @@
                 cancelAnimationFrame(flyRaf);
                 timers.forEach(clearTimeout);
                 intro.classList.add('is-done');
+                document.body.classList.add('grid-go');   // start the white -> purple -> red pulses
                 setTimeout(() => intro.remove(), 800);
                 document.removeEventListener('keydown', onKey);
             }
